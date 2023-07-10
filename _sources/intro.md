@@ -6,7 +6,8 @@ Currently, PyWavelet is in the early stages of development and is based entirely
 
 The package is not yet available on PyPI, but can be installed from source. The source code is available on [GitHub](https://github.com/avivajpeyi/pywavelet)
 
-
+Table of contents
+-----------------
 
 ```{tableofcontents}
 ```
