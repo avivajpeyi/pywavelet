@@ -356,6 +356,8 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-waveform">Basic Waveform</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#waveforms-in-noise">Waveforms in noise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wavelet-domain-psd">Wavelet domain PSD</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wavelet-domain-snr">Wavelet domain SNR</a></li>
 </ul>
             </nav>
         </div>
@@ -386,6 +388,9 @@ document.write(`
 
 <span class="n">bilby_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;bilby&quot;</span><span class="p">)</span>
 <span class="n">bilby_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+<span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span>
+<span class="n">mult</span> <span class="o">=</span> <span class="mi">16</span>
 
 <span class="n">DURATION</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">SAMPLING_FREQUENCY</span> <span class="o">=</span> <span class="mi">512</span>
@@ -446,8 +451,6 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">create_cbc_wavelet_waveform_generator</span><span class="p">():</span>
-    <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span>
-    <span class="n">mult</span> <span class="o">=</span> <span class="mi">16</span>
     <span class="n">hfunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">mc</span><span class="p">:</span> <span class="n">cbc_waveform</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
     <span class="c1"># NOTE: Nf * Nt == len(h) returned from h-func</span>
     <span class="n">waveform_generator</span> <span class="o">=</span> <span class="n">FunctionalWaveformGenerator</span><span class="p">(</span><span class="n">hfunc</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="o">=</span><span class="n">Nt</span><span class="p">,</span> <span class="n">mult</span><span class="o">=</span><span class="n">mult</span><span class="p">)</span>
@@ -455,7 +458,6 @@ document.write(`
 
 
 <span class="n">wavelet_generator</span> <span class="o">=</span> <span class="n">create_cbc_wavelet_waveform_generator</span><span class="p">()</span>
-<span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span> <span class="o">=</span> <span class="n">wavelet_generator</span><span class="o">.</span><span class="n">Nf</span><span class="p">,</span> <span class="n">wavelet_generator</span><span class="o">.</span><span class="n">Nt</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">]):</span>
     <span class="n">wavelet_matrix</span> <span class="o">=</span> <span class="n">wavelet_generator</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="n">mc</span><span class="p">)</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">wavelet_matrix</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
@@ -483,6 +485,7 @@ document.write(`
         <span class="n">sampling_frequency</span><span class="o">=</span><span class="n">SAMPLING_FREQUENCY</span><span class="p">,</span>
         <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span>
         <span class="n">start_time</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span>
+
     <span class="p">)</span>
     <span class="k">return</span>  <span class="n">ifos</span>
 
@@ -523,62 +526,78 @@ document.write(`
 <img alt="../_images/84dcda94d059ae9b78d97686655a9bc67972cbc7d29ea6d38e15109e712992fe.png" src="../_images/84dcda94d059ae9b78d97686655a9bc67972cbc7d29ea6d38e15109e712992fe.png" />
 </div>
 </div>
+</section>
+<section id="wavelet-domain-psd">
+<h2>Wavelet domain PSD<a class="headerlink" href="#wavelet-domain-psd" title="Permalink to this heading">#</a></h2>
+<p>We need a wavelet domain PSD… Lets generate this by taking the median of several wavelet transforms of just noise.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_noise_wavelet_data</span><span class="p">(</span><span class="n">t0</span><span class="p">):</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">get_ifo</span><span class="p">(</span><span class="n">t0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">time_domain_strain</span>
+    <span class="n">noise_wavelet</span> <span class="o">=</span> <span class="n">from_time_to_wavelet</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
+    <span class="k">return</span>  <span class="n">noise_wavelet</span>
+
+<span class="k">def</span> <span class="nf">get_wavelet_psd_from_median_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;n: number of noise wavelets to take median of&quot;&quot;&quot;</span>
+    <span class="n">noise_wavelets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">noise_wavelets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_noise_wavelet_data</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">DURATION</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">psd_wavelet</span> <span class="o">=</span> <span class="n">get_wavelet_psd_from_median_noise</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">psd_wavelet</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AssertionError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">68</span><span class="p">],</span> <span class="n">line</span> <span class="mi">16</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span>     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">))</span> <span class="o">==</span> <span class="n">n</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span>     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">16</span> <span class="n">psd_wavelet</span> <span class="o">=</span> <span class="n">get_wavelet_psd_from_median_noise</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">psd_wavelet</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
+
+<span class="nn">Cell In[68], line 13,</span> in <span class="ni">get_wavelet_psd_from_median_noise</span><span class="nt">(n)</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">noise_wavelets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span>     <span class="n">get_noise_wavelet_data</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">DURATION</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="c1"># check that the noise wavelets are all unique</span>
+<span class="ne">---&gt; </span><span class="mi">13</span> <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">))</span> <span class="o">==</span> <span class="n">n</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="ne">AssertionError</span>: 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="wavelet-domain-snr">
+<h2>Wavelet domain SNR<a class="headerlink" href="#wavelet-domain-snr" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywavelet.transforms</span> <span class="kn">import</span> <span class="n">from_time_to_wavelet</span>
-
+<span class="kn">from</span> <span class="nn">pywavelet.utils.snr</span> <span class="kn">import</span> <span class="n">compute_snr</span>
 
 <span class="n">t</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">inject_signal_in_noise</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 <span class="n">_</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">time_domain_snr</span> <span class="o">=</span> <span class="n">inject_signal_in_noise</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
 <span class="n">data_wavelet</span> <span class="o">=</span> <span class="n">from_time_to_wavelet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
 <span class="n">h_wavelet</span> <span class="o">=</span> <span class="n">from_time_to_wavelet</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">data_wavelet</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">h_wavelet</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
+<span class="n">wavelet_snr</span> <span class="o">=</span> <span class="n">compute_snr</span><span class="p">(</span><span class="n">h_wavelet</span><span class="p">,</span> <span class="n">data_wavelet</span><span class="p">,</span> <span class="n">psd_wavelet</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wavelet_snr</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/3da20da02ab83447a1efd514ab3865a8108d1d6007794e33ab88a31a131361a5.png" src="../_images/3da20da02ab83447a1efd514ab3865a8108d1d6007794e33ab88a31a131361a5.png" />
-<img alt="../_images/4cdcc8ad304993d495890f1ab50d6a3e0a852f7a7710ccdf75fbae6b9bb24c2b.png" src="../_images/4cdcc8ad304993d495890f1ab50d6a3e0a852f7a7710ccdf75fbae6b9bb24c2b.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywavelet.utils.snr</span> <span class="kn">import</span> <span class="n">compute_snr</span>
-
-<span class="n">ifo</span> <span class="o">=</span> <span class="n">get_ifo</span><span class="p">(</span><span class="n">GW_PARMS</span><span class="p">[</span><span class="s2">&quot;geocent_time&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">ifo</span><span class="o">.</span><span class="n">frequency_array</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ifo</span><span class="o">.</span><span class="n">amplitude_spectral_density_array</span><span class="p">),</span>
-               <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ASD (estimated noise)&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:orange&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Frequency [Hz]&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">ifo</span><span class="o">.</span><span class="n">minimum_frequency</span><span class="p">,</span> <span class="n">ifo</span><span class="o">.</span><span class="n">maximum_frequency</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Strain [strain/$\sqrt{\rm Hz}$]&#39;</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/71ee2c983609eacd69624389a0f37a042cfc58b8ddc5cbd90ca744f121b6138f.png" src="../_images/71ee2c983609eacd69624389a0f37a042cfc58b8ddc5cbd90ca744f121b6138f.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: convert this to PSD[ti, fi]... It can be the same for each time bin?</span>
-<span class="kn">from</span> <span class="nn">pywavelet.transforms</span> <span class="kn">import</span> <span class="n">from_freq_to_wavelet</span>
-
-<span class="n">psd_wavelet</span> <span class="o">=</span> <span class="n">from_freq_to_wavelet</span><span class="p">(</span><span class="n">ifo</span><span class="o">.</span><span class="n">amplitude_spectral_density_array</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
-<span class="n">psd_wavelet</span><span class="p">[</span><span class="n">psd_wavelet</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-30</span>
-<span class="n">compute_snr</span><span class="p">(</span><span class="n">h_wavelet</span><span class="p">,</span> <span class="n">data_wavelet</span><span class="p">,</span> <span class="n">psd_wavelet</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[nan, nan, nan, ..., nan, nan, nan],
-       [nan, nan, nan, ..., nan, nan, nan],
-       [nan, nan, nan, ..., nan, nan, nan],
-       ...,
-       [nan, nan, nan, ..., nan, nan, nan],
-       [nan, nan, nan, ..., nan, nan, nan],
-       [nan, nan, nan, ..., nan, nan, nan]])
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[nan nan nan ... nan nan nan]
+ [nan nan nan ... nan nan nan]
+ [nan nan nan ... nan nan nan]
+ ...
+ [nan nan nan ... nan nan nan]
+ [nan nan nan ... nan nan nan]
+ [nan nan nan ... nan nan nan]]
 </pre></div>
 </div>
 </div>
@@ -633,6 +652,8 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-waveform">Basic Waveform</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#waveforms-in-noise">Waveforms in noise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wavelet-domain-psd">Wavelet domain PSD</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wavelet-domain-snr">Wavelet domain SNR</a></li>
 </ul>
   </nav></div>
 

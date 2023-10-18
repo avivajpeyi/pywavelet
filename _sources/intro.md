@@ -2,7 +2,7 @@
 
 PyWavelet is a python package designed to help work with GW waveforms in the WDM wavelet domain.
 
-Currently, PyWavelet is in the early stages of development and is based entirely off {cite}`MCDigmanWDMTransformRepo`. 
+Currently, PyWavelet is in the early stages of development and is based entirely off {cite}`MCDigmanWDMTransformRepo`.
 
 The package is not yet available on PyPI, but can be installed from source. The source code is available on [GitHub](https://github.com/avivajpeyi/pywavelet)
 
