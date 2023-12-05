@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
-  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -137,9 +137,11 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="../intro.html">
+  
   
   
   
@@ -314,6 +316,7 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -323,6 +326,7 @@ document.write(`
   </button>
 `);
 </script>
+
 
 <script>
 document.write(`
@@ -375,12 +379,13 @@ document.write(`
 <h2>Basic Waveform<a class="headerlink" href="#basic-waveform" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">pycbc.waveform</span> <span class="kn">import</span> <span class="n">get_td_waveform</span>
 <span class="kn">from</span> <span class="nn">pycbc.conversions</span> <span class="kn">import</span> <span class="n">mass1_from_mchirp_q</span><span class="p">,</span> <span class="n">mass2_from_mchirp_q</span>
 <span class="kn">from</span> <span class="nn">pywavelet.waveform_generator.generators</span> <span class="kn">import</span> <span class="n">FunctionalWaveformGenerator</span>
-<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">colors</span>
+<span class="kn">from</span> <span class="nn">pywavelet.plotting</span> <span class="kn">import</span> <span class="n">plot_wavelet_domain_grid</span>
+<span class="kn">from</span> <span class="nn">pywavelet.transforms.types</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
 
 <span class="kn">import</span> <span class="nn">bilby</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -405,72 +410,75 @@ document.write(`
         <span class="n">waveform_approximant</span><span class="o">=</span><span class="s2">&quot;IMRPhenomD&quot;</span><span class="p">,</span>
         <span class="n">reference_frequency</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
         <span class="n">minimum_frequency</span><span class="o">=</span><span class="n">MINIMUM_FREQUENCY</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">),</span>
 <span class="p">)</span>
 
 <span class="n">GW_PARMS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">mass_1</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">mass_2</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>  <span class="c1"># 2 mass parameters</span>
-    <span class="n">a_1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a_2</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">tilt_1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">tilt_2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">phi_12</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">phi_jl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># 6 spin parameters</span>
-    <span class="n">ra</span><span class="o">=</span><span class="mf">1.375</span><span class="p">,</span> <span class="n">dec</span><span class="o">=-</span><span class="mf">1.2108</span><span class="p">,</span> <span class="n">luminosity_distance</span><span class="o">=</span><span class="mf">2000.0</span><span class="p">,</span> <span class="n">theta_jn</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># 7 extrinsic parameters</span>
-    <span class="n">psi</span><span class="o">=</span><span class="mf">2.659</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>
+    <span class="n">mass_1</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">mass_2</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>  <span class="c1"># 2 mass parameters</span>
+    <span class="n">a_1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">a_2</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">tilt_1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">tilt_2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">phi_12</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">phi_jl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># 6 spin parameters</span>
+    <span class="n">ra</span><span class="o">=</span><span class="mf">1.375</span><span class="p">,</span>
+    <span class="n">dec</span><span class="o">=-</span><span class="mf">1.2108</span><span class="p">,</span>
+    <span class="n">luminosity_distance</span><span class="o">=</span><span class="mf">2000.0</span><span class="p">,</span>
+    <span class="n">theta_jn</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># 7 extrinsic parameters</span>
+    <span class="n">psi</span><span class="o">=</span><span class="mf">2.659</span><span class="p">,</span>
+    <span class="n">phase</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>
     <span class="n">geocent_time</span><span class="o">=</span><span class="mf">1126259642.413</span><span class="p">,</span>
 <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cbc_waveform</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="n">bilby</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">chirp_mass_and_mass_ratio_to_component_masses</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="n">bilby</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">chirp_mass_and_mass_ratio_to_component_masses</span><span class="p">(</span>
+        <span class="n">mc</span><span class="p">,</span> <span class="n">q</span>
+    <span class="p">)</span>
 
     <span class="n">params</span> <span class="o">=</span> <span class="n">GW_PARMS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;mass_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m1</span>
-    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;mass_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m2</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;mass_1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m1</span>
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;mass_2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m2</span>
 
-    <span class="n">h</span> <span class="o">=</span> <span class="n">CBC_GENERATOR</span><span class="o">.</span><span class="n">time_domain_strain</span><span class="p">(</span><span class="n">params</span><span class="p">)[</span><span class="s1">&#39;plus&#39;</span><span class="p">]</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">CBC_GENERATOR</span><span class="o">.</span><span class="n">time_domain_strain</span><span class="p">(</span><span class="n">params</span><span class="p">)[</span><span class="s2">&quot;plus&quot;</span><span class="p">]</span>
     <span class="c1"># template sets max amplitude t=end of waveform, so we roll it back a bit</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">//</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">//</span> <span class="mi">6</span><span class="p">)</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">CBC_GENERATOR</span><span class="o">.</span><span class="n">time_array</span>
-    <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">h</span>
-
-
-<span class="k">def</span> <span class="nf">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">wavelet_data</span><span class="p">,</span> <span class="n">Nt</span><span class="p">,</span> <span class="n">Nf</span><span class="p">):</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-    <span class="n">norm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">wavelet_data</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">vcenter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">wavelet_data</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">wavelet_data</span><span class="p">),</span>
-        <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-        <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">Nt</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Nf</span><span class="p">],</span>
-        <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;bwr&#39;</span><span class="p">,</span>
-        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span>
-    <span class="p">)</span>
-    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-    <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;Wavelet Amplitude&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time Bins [$\Delta T$=&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Nt</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s, Nt=</span><span class="si">{</span><span class="n">Nt</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Freq Bins [$\Delta F$=&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Nf</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">Hz, Nf=</span><span class="si">{</span><span class="n">Nf</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
-    <span class="c1"># plt.ylim(*freq_range)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">fig</span>
+    <span class="k">return</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">create_cbc_wavelet_waveform_generator</span><span class="p">():</span>
-    <span class="n">hfunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">mc</span><span class="p">:</span> <span class="n">cbc_waveform</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">hfunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">mc</span><span class="p">:</span> <span class="n">cbc_waveform</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="c1"># NOTE: Nf * Nt == len(h) returned from h-func</span>
-    <span class="n">waveform_generator</span> <span class="o">=</span> <span class="n">FunctionalWaveformGenerator</span><span class="p">(</span><span class="n">hfunc</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="o">=</span><span class="n">Nt</span><span class="p">,</span> <span class="n">mult</span><span class="o">=</span><span class="n">mult</span><span class="p">)</span>
+    <span class="n">waveform_generator</span> <span class="o">=</span> <span class="n">FunctionalWaveformGenerator</span><span class="p">(</span><span class="n">hfunc</span><span class="p">,</span> <span class="n">Nt</span><span class="o">=</span><span class="n">Nt</span><span class="p">,</span> <span class="n">mult</span><span class="o">=</span><span class="n">mult</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">waveform_generator</span>
 
 
 <span class="n">wavelet_generator</span> <span class="o">=</span> <span class="n">create_cbc_wavelet_waveform_generator</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">]):</span>
-    <span class="n">wavelet_matrix</span> <span class="o">=</span> <span class="n">wavelet_generator</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="n">mc</span><span class="p">)</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">wavelet_matrix</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mc=</span><span class="si">{</span><span class="n">mc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">wavelet</span> <span class="o">=</span> <span class="n">wavelet_generator</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="n">mc</span><span class="p">)</span>
+    <span class="n">ht</span> <span class="o">=</span> <span class="n">cbc_waveform</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="n">mc</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ht</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">ht</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Strain&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time Domain&quot;</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">wavelet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wavelet-Domain&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\mathcal</span><span class="si">{M}</span><span class="s2">_c=&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mc</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cbc_wavelet_mc_</span><span class="si">{</span><span class="n">mc</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/a258aa1affbb1a2047e7274486bb498de1db2a45f1fca13d6ffa7abd3283a85c.png" src="../_images/a258aa1affbb1a2047e7274486bb498de1db2a45f1fca13d6ffa7abd3283a85c.png" />
-<img alt="../_images/f3ad41ad6d0934b690be3f8998cd5c9e1d9ea522c1cb4d54d33137e772d9b27f.png" src="../_images/f3ad41ad6d0934b690be3f8998cd5c9e1d9ea522c1cb4d54d33137e772d9b27f.png" />
-<img alt="../_images/ece8e8acd333b8ce0db63a0f0d06b3a66aa388afce7ff42804ce5a5f97a9b34e.png" src="../_images/ece8e8acd333b8ce0db63a0f0d06b3a66aa388afce7ff42804ce5a5f97a9b34e.png" />
-<img alt="../_images/a010c12df48bd32e18375f94d22e954db2d67e201ac7730a43e48dc14bc31a4e.png" src="../_images/a010c12df48bd32e18375f94d22e954db2d67e201ac7730a43e48dc14bc31a4e.png" />
+<img alt="../_images/4682c4425ebf486fa18e42e1ad4c6b3365a7e25a54b9f0e9b573b28f2d0511fc.png" src="../_images/4682c4425ebf486fa18e42e1ad4c6b3365a7e25a54b9f0e9b573b28f2d0511fc.png" />
+<img alt="../_images/f1d6ceb49eada76b60d21f12902f87cfa4bbd1d330a7484be84354b44030e63f.png" src="../_images/f1d6ceb49eada76b60d21f12902f87cfa4bbd1d330a7484be84354b44030e63f.png" />
+<img alt="../_images/4dc655decd5ee69453513ef6092f1c43f0e75f6e606ee5d252443811570b8fb2.png" src="../_images/4dc655decd5ee69453513ef6092f1c43f0e75f6e606ee5d252443811570b8fb2.png" />
+<img alt="../_images/b2bd86899ad90ddb117bba896856cadae81e7154f254ee0ecc7f258a2628ea1e.png" src="../_images/b2bd86899ad90ddb117bba896856cadae81e7154f254ee0ecc7f258a2628ea1e.png" />
 </div>
 </div>
 </section>
@@ -479,20 +487,24 @@ document.write(`
 <p>Let’s inject the signals into LIGO detector noise (at design sensitivity), compute the SNR in the time and the wavelet domains.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_ifo</span><span class="p">(</span><span class="n">t0</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_ifo</span><span class="p">(</span><span class="n">t0</span><span class="p">):</span>
     <span class="n">ifos</span> <span class="o">=</span> <span class="n">bilby</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">detector</span><span class="o">.</span><span class="n">InterferometerList</span><span class="p">([</span><span class="s2">&quot;H1&quot;</span><span class="p">])</span>  <span class="c1"># design sensitivity</span>
     <span class="n">ifos</span><span class="o">.</span><span class="n">set_strain_data_from_power_spectral_densities</span><span class="p">(</span>
         <span class="n">sampling_frequency</span><span class="o">=</span><span class="n">SAMPLING_FREQUENCY</span><span class="p">,</span>
         <span class="n">duration</span><span class="o">=</span><span class="n">DURATION</span><span class="p">,</span>
         <span class="n">start_time</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span>
-
     <span class="p">)</span>
-    <span class="k">return</span>  <span class="n">ifos</span>
+    <span class="k">return</span> <span class="n">ifos</span>
+
 
 <span class="k">def</span> <span class="nf">inject_signal_in_noise</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
     <span class="n">injection_parameters</span> <span class="o">=</span> <span class="n">GW_PARMS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">injection_parameters</span><span class="p">[</span><span class="s2">&quot;mass_1&quot;</span><span class="p">],</span> <span class="n">injection_parameters</span><span class="p">[</span>
-        <span class="s2">&quot;mass_2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bilby</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">chirp_mass_and_mass_ratio_to_component_masses</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="p">(</span>
+        <span class="n">injection_parameters</span><span class="p">[</span><span class="s2">&quot;mass_1&quot;</span><span class="p">],</span>
+        <span class="n">injection_parameters</span><span class="p">[</span><span class="s2">&quot;mass_2&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">bilby</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">conversion</span><span class="o">.</span><span class="n">chirp_mass_and_mass_ratio_to_component_masses</span><span class="p">(</span>
+        <span class="n">mc</span><span class="p">,</span> <span class="n">q</span>
+    <span class="p">)</span>
     <span class="n">injection_parameters</span><span class="p">[</span><span class="s2">&quot;luminosity_distance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">distance</span>
 
     <span class="n">ifos</span> <span class="o">=</span> <span class="n">get_ifo</span><span class="p">(</span><span class="n">injection_parameters</span><span class="p">[</span><span class="s2">&quot;geocent_time&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.5</span><span class="p">)</span>
@@ -504,26 +516,26 @@ document.write(`
     <span class="n">waveform</span> <span class="o">=</span> <span class="n">CBC_GENERATOR</span><span class="o">.</span><span class="n">frequency_domain_strain</span><span class="p">(</span><span class="n">injection_parameters</span><span class="p">)</span>
     <span class="n">signal</span> <span class="o">=</span> <span class="n">ifo</span><span class="o">.</span><span class="n">get_detector_response</span><span class="p">(</span><span class="n">waveform</span><span class="p">,</span> <span class="n">injection_parameters</span><span class="p">)</span>
     <span class="n">snr</span> <span class="o">=</span> <span class="n">ifo</span><span class="o">.</span><span class="n">optimal_snr_squared</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ifo</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span> <span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">time_domain_strain</span><span class="p">,</span>  <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">snr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ifo</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span> <span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">time_domain_strain</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">snr</span><span class="p">)</span>
 
 
 <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">]:</span>
     <span class="n">t</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">inject_signal_in_noise</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">snr</span> <span class="o">=</span> <span class="n">inject_signal_in_noise</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Data (SNR: </span><span class="si">{</span><span class="n">snr</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">h</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Signal&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Data (SNR: </span><span class="si">{</span><span class="n">snr</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">h</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Signal&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized Strain&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/b294d676e2b74d3514ff1c9641f4429dda0851c34f8d967712c86f93b592bda1.png" src="../_images/b294d676e2b74d3514ff1c9641f4429dda0851c34f8d967712c86f93b592bda1.png" />
-<img alt="../_images/3f9e10a1b7be59934e91798e9aab1a81c3099d1b462c71ac525c59c92f82a520.png" src="../_images/3f9e10a1b7be59934e91798e9aab1a81c3099d1b462c71ac525c59c92f82a520.png" />
-<img alt="../_images/84dcda94d059ae9b78d97686655a9bc67972cbc7d29ea6d38e15109e712992fe.png" src="../_images/84dcda94d059ae9b78d97686655a9bc67972cbc7d29ea6d38e15109e712992fe.png" />
+<img alt="../_images/9d3a91f47e917b7c9e4d1d7ce55120339edb1954fdf03a180bca24891d3f2261.png" src="../_images/9d3a91f47e917b7c9e4d1d7ce55120339edb1954fdf03a180bca24891d3f2261.png" />
+<img alt="../_images/72568730a2e7710423df8bff0adbb367e0098f832c2fa737e100575330f25d99.png" src="../_images/72568730a2e7710423df8bff0adbb367e0098f832c2fa737e100575330f25d99.png" />
+<img alt="../_images/6caad3ad5e3c1078031019916c61d4b1e89d4e4946042a2c2caf803708674f2d.png" src="../_images/6caad3ad5e3c1078031019916c61d4b1e89d4e4946042a2c2caf803708674f2d.png" />
 </div>
 </div>
 </section>
@@ -532,42 +544,48 @@ document.write(`
 <p>We need a wavelet domain PSD… Lets generate this by taking the median of several wavelet transforms of just noise.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_noise_wavelet_data</span><span class="p">(</span><span class="n">t0</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_noise_wavelet_data</span><span class="p">(</span><span class="n">t0</span><span class="p">):</span>
     <span class="n">noise</span> <span class="o">=</span> <span class="n">get_ifo</span><span class="p">(</span><span class="n">t0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">time_domain_strain</span>
     <span class="n">noise_wavelet</span> <span class="o">=</span> <span class="n">from_time_to_wavelet</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
-    <span class="k">return</span>  <span class="n">noise_wavelet</span>
+    <span class="k">return</span> <span class="n">noise_wavelet</span>
+
 
 <span class="k">def</span> <span class="nf">get_wavelet_psd_from_median_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;n: number of noise wavelets to take median of&quot;&quot;&quot;</span>
     <span class="n">noise_wavelets</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="n">noise_wavelets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_noise_wavelet_data</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">DURATION</span><span class="p">))</span>
+        <span class="n">noise_wavelets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_noise_wavelet_data</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">DURATION</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
+
 <span class="n">psd_wavelet</span> <span class="o">=</span> <span class="n">get_wavelet_psd_from_median_noise</span><span class="p">()</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">psd_wavelet</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_grid</span><span class="p">(</span><span class="n">psd_wavelet</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AssertionError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">68</span><span class="p">],</span> <span class="n">line</span> <span class="mi">16</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span>     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">))</span> <span class="o">==</span> <span class="n">n</span>
-<span class="g g-Whitespace">     </span><span class="mi">14</span>     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">16</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>         <span class="n">noise_wavelets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_noise_wavelet_data</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">DURATION</span><span class="p">))</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span>     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="ne">---&gt; </span><span class="mi">16</span> <span class="n">psd_wavelet</span> <span class="o">=</span> <span class="n">get_wavelet_psd_from_median_noise</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">psd_wavelet</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_grid</span><span class="p">(</span><span class="n">psd_wavelet</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
 
-<span class="nn">Cell In[68], line 13,</span> in <span class="ni">get_wavelet_psd_from_median_noise</span><span class="nt">(n)</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">noise_wavelets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span>     <span class="n">get_noise_wavelet_data</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">DURATION</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="c1"># check that the noise wavelets are all unique</span>
-<span class="ne">---&gt; </span><span class="mi">13</span> <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">))</span> <span class="o">==</span> <span class="n">n</span>
-<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nn">Cell In[3], line 12,</span> in <span class="ni">get_wavelet_psd_from_median_noise</span><span class="nt">(n)</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">12</span>     <span class="n">noise_wavelets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_noise_wavelet_data</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">DURATION</span><span class="p">))</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">noise_wavelets</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="ne">AssertionError</span>: 
+<span class="nn">Cell In[3], line 3,</span> in <span class="ni">get_noise_wavelet_data</span><span class="nt">(t0)</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="k">def</span> <span class="nf">get_noise_wavelet_data</span><span class="p">(</span><span class="n">t0</span><span class="p">):</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span>     <span class="n">noise</span> <span class="o">=</span> <span class="n">get_ifo</span><span class="p">(</span><span class="n">t0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">time_domain_strain</span>
+<span class="ne">----&gt; </span><span class="mi">3</span>     <span class="n">noise_wavelet</span> <span class="o">=</span> <span class="n">from_time_to_wavelet</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="k">return</span> <span class="n">noise_wavelet</span>
+
+<span class="ne">NameError</span>: name &#39;from_time_to_wavelet&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -577,7 +595,7 @@ document.write(`
 <h2>Wavelet domain SNR<a class="headerlink" href="#wavelet-domain-snr" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywavelet.transforms</span> <span class="kn">import</span> <span class="n">from_time_to_wavelet</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywavelet.transforms</span> <span class="kn">import</span> <span class="n">from_time_to_wavelet</span>
 <span class="kn">from</span> <span class="nn">pywavelet.utils.snr</span> <span class="kn">import</span> <span class="n">compute_snr</span>
 
 <span class="n">t</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">inject_signal_in_noise</span><span class="p">(</span><span class="n">mc</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
@@ -586,7 +604,7 @@ document.write(`
 <span class="n">h_wavelet</span> <span class="o">=</span> <span class="n">from_time_to_wavelet</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span>
 
 <span class="n">wavelet_snr</span> <span class="o">=</span> <span class="n">compute_snr</span><span class="p">(</span><span class="n">h_wavelet</span><span class="p">,</span> <span class="n">data_wavelet</span><span class="p">,</span> <span class="n">psd_wavelet</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">wavelet_snr</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wavelet_snrpsd_f</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -633,7 +651,7 @@ document.write(`
               
               
                 <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                  
 <div class="prev-next-area">
 </div>
                 </footer>
@@ -675,6 +693,7 @@ By The Jupyter Book Community
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2022.
@@ -701,8 +720,8 @@ By The Jupyter Book Community
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
-  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -140,9 +140,11 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="../intro.html">
+  
   
   
   
@@ -317,6 +319,7 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -326,6 +329,7 @@ document.write(`
   </button>
 `);
 </script>
+
 
 <script>
 document.write(`
@@ -369,19 +373,30 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.signal.windows</span> <span class="kn">import</span> <span class="n">tukey</span>
 
+
 <span class="k">def</span> <span class="nf">PowerSpectralDensity</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PSD obtained from: https://arxiv.org/pdf/1803.01944.pdf</span>
 <span class="sd">    Removed galactic confusion noise. Non stationary effect.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">L</span> <span class="o">=</span> <span class="mf">2.5</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">9</span>   <span class="c1"># Length of LISA arm</span>
-    <span class="n">f0</span> <span class="o">=</span> <span class="mf">19.09</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">3</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span>  <span class="c1"># Length of LISA arm</span>
+    <span class="n">f0</span> <span class="o">=</span> <span class="mf">19.09</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">3</span>
 
-    <span class="n">Poms</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.5</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">11</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">f</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># Optical Metrology Sensor</span>
-    <span class="n">Pacc</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">15</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">3</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">f</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">f</span><span class="o">/</span><span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">3</span><span class="p">))</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># Acceleration Noise</span>
+    <span class="n">Poms</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.5</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">11</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+        <span class="mi">1</span> <span class="o">+</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="n">f</span><span class="p">)</span> <span class="o">**</span> <span class="mi">4</span>
+    <span class="p">)</span>  <span class="c1"># Optical Metrology Sensor</span>
+    <span class="n">Pacc</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">15</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">f</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">f</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">3</span><span class="p">))</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># Acceleration Noise</span>
 
-    <span class="n">PSD</span> <span class="o">=</span> <span class="p">((</span><span class="mi">10</span><span class="o">/</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">L</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">Poms</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">Pacc</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">f</span><span class="p">))</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.6</span><span class="o">*</span><span class="p">(</span><span class="n">f</span><span class="o">/</span><span class="n">f0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="c1"># PSD</span>
+    <span class="n">PSD</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">10</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">L</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="o">*</span> <span class="p">(</span><span class="n">Poms</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">Pacc</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span><span class="p">))</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="p">(</span><span class="n">f</span> <span class="o">/</span> <span class="n">f0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># PSD</span>
 
     <span class="k">return</span> <span class="n">PSD</span>
 
@@ -393,7 +408,8 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">pow_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">data</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">((</span><span class="mi">2</span><span class="o">**</span><span class="n">pow_2</span><span class="p">)</span><span class="o">-</span><span class="n">N</span><span class="p">)),</span><span class="s1">&#39;constant&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="mi">2</span><span class="o">**</span><span class="n">pow_2</span><span class="p">)</span> <span class="o">-</span> <span class="n">N</span><span class="p">)),</span> <span class="s2">&quot;constant&quot;</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">FFT</span><span class="p">(</span><span class="n">waveform</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -401,26 +417,31 @@ document.write(`
 <span class="sd">    the PSD (for which the frequency domain waveform is used with) is undefined at f = 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">waveform</span><span class="p">)</span>
-    <span class="n">taper</span> <span class="o">=</span> <span class="n">tukey</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
-    <span class="n">waveform_w_pad</span> <span class="o">=</span> <span class="n">zero_pad</span><span class="p">(</span><span class="n">waveform</span><span class="o">*</span><span class="n">taper</span><span class="p">)</span>
+    <span class="n">taper</span> <span class="o">=</span> <span class="n">tukey</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">waveform_w_pad</span> <span class="o">=</span> <span class="n">zero_pad</span><span class="p">(</span><span class="n">waveform</span> <span class="o">*</span> <span class="n">taper</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">waveform_w_pad</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
 
-<span class="k">def</span> <span class="nf">freq_PSD</span><span class="p">(</span><span class="n">waveform_t</span><span class="p">,</span><span class="n">delta_t</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">freq_PSD</span><span class="p">(</span><span class="n">waveform_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Here we take in a waveform and sample the correct fourier frequencies and output the PSD. There is no</span>
 <span class="sd">    f = 0 frequency bin because the PSD is undefined there.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n_t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">zero_pad</span><span class="p">(</span><span class="n">waveform_t</span><span class="p">))</span>
-    <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfftfreq</span><span class="p">(</span><span class="n">n_t</span><span class="p">,</span><span class="n">delta_t</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfftfreq</span><span class="p">(</span><span class="n">n_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="n">PSD</span> <span class="o">=</span> <span class="n">PowerSpectralDensity</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span><span class="n">PSD</span>
+    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span> <span class="n">PSD</span>
 
-<span class="k">def</span> <span class="nf">inner_prod</span><span class="p">(</span><span class="n">sig1_f</span><span class="p">,</span><span class="n">sig2_f</span><span class="p">,</span><span class="n">PSD</span><span class="p">,</span><span class="n">delta_t</span><span class="p">,</span><span class="n">N_t</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">inner_prod</span><span class="p">(</span><span class="n">sig1_f</span><span class="p">,</span> <span class="n">sig2_f</span><span class="p">,</span> <span class="n">PSD</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">N_t</span><span class="p">):</span>
     <span class="c1"># Compute inner product. Useful for likelihood calculations and SNRs.</span>
-    <span class="k">return</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">delta_t</span><span class="o">/</span><span class="n">N_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">sig1_f</span><span class="p">)</span><span class="o">*</span><span class="n">sig2_f</span><span class="o">/</span><span class="n">PSD</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">delta_t</span> <span class="o">/</span> <span class="n">N_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span>
+        <span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">sig1_f</span><span class="p">)</span> <span class="o">*</span> <span class="n">sig2_f</span> <span class="o">/</span> <span class="n">PSD</span><span class="p">)</span>
+    <span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">waveform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">fdot</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">eps</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">waveform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">fdot</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is a function. It takes in a value of the amplitude $a$, frequency $f$ and frequency derivative $\dot{f}</span>
 <span class="sd">    and a time vector $t$ and spits out whatever is in the return function. Modify amplitude to improve SNR.</span>
@@ -428,7 +449,7 @@ document.write(`
 <span class="sd">    for the windowing method. We aim to estimate the parameters $a$, $f$ and $\dot{f}$.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">f</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">fdot</span> <span class="o">*</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">fdot</span> <span class="o">*</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -440,6 +461,7 @@ document.write(`
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
+
 <span class="k">def</span> <span class="nf">llike</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span> <span class="n">signal_f</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes log likelihood</span>
@@ -449,12 +471,12 @@ document.write(`
 <span class="sd">    Proposed signal in frequency domain</span>
 <span class="sd">    Variance of noise</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">inn_prod</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="nb">abs</span><span class="p">(</span><span class="n">data_f</span> <span class="o">-</span> <span class="n">signal_f</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">variance_noise_f</span><span class="p">)</span>
+    <span class="n">inn_prod</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="nb">abs</span><span class="p">(</span><span class="n">data_f</span> <span class="o">-</span> <span class="n">signal_f</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">variance_noise_f</span><span class="p">)</span>
     <span class="c1"># print(inn_prod)</span>
-    <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">inn_prod</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">inn_prod</span>
 
 
-<span class="k">def</span> <span class="nf">lprior_uniform</span><span class="p">(</span><span class="n">param</span><span class="p">,</span><span class="n">param_low_val</span><span class="p">,</span><span class="n">param_high_val</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">lprior_uniform</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">param_low_val</span><span class="p">,</span> <span class="n">param_high_val</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set uniform priors on parameters with select ranges.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -463,35 +485,59 @@ document.write(`
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
 
-<span class="k">def</span> <span class="nf">lpost</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span><span class="n">signal_f</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">,</span><span class="n">param1</span><span class="p">,</span><span class="n">param2</span><span class="p">,</span><span class="n">param3</span><span class="p">,</span> <span class="n">param1_low_range</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="n">param1_high_range</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-                                                   <span class="n">param2_low_range</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="n">param2_high_range</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-                                                    <span class="n">param3_low_range</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="n">param3_high_range</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">lpost</span><span class="p">(</span>
+    <span class="n">data_f</span><span class="p">,</span>
+    <span class="n">signal_f</span><span class="p">,</span>
+    <span class="n">variance_noise_f</span><span class="p">,</span>
+    <span class="n">param1</span><span class="p">,</span>
+    <span class="n">param2</span><span class="p">,</span>
+    <span class="n">param3</span><span class="p">,</span>
+    <span class="n">param1_low_range</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">param1_high_range</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">param2_low_range</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">param2_high_range</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">param3_low_range</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">param3_high_range</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute log posterior - require log likelihood and log prior.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span><span class="p">(</span><span class="n">lprior_uniform</span><span class="p">(</span><span class="n">param1</span><span class="p">,</span><span class="n">param1_low_range</span><span class="p">,</span><span class="n">param1_high_range</span><span class="p">)</span> <span class="o">+</span>
-                <span class="n">lprior_uniform</span><span class="p">(</span><span class="n">param2</span><span class="p">,</span><span class="n">param2_low_range</span><span class="p">,</span><span class="n">param2_high_range</span><span class="p">)</span> <span class="o">+</span>
-                    <span class="n">lprior_uniform</span><span class="p">(</span><span class="n">param3</span><span class="p">,</span><span class="n">param3_low_range</span><span class="p">,</span><span class="n">param3_high_range</span><span class="p">)</span> <span class="o">+</span> <span class="n">llike</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span><span class="n">signal_f</span><span class="p">,</span><span class="n">variance_noise_f</span><span class="p">))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">lprior_uniform</span><span class="p">(</span><span class="n">param1</span><span class="p">,</span> <span class="n">param1_low_range</span><span class="p">,</span> <span class="n">param1_high_range</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">lprior_uniform</span><span class="p">(</span><span class="n">param2</span><span class="p">,</span> <span class="n">param2_low_range</span><span class="p">,</span> <span class="n">param2_high_range</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">lprior_uniform</span><span class="p">(</span><span class="n">param3</span><span class="p">,</span> <span class="n">param3_low_range</span><span class="p">,</span> <span class="n">param3_high_range</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">llike</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span> <span class="n">signal_f</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">)</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">accept_reject</span><span class="p">(</span><span class="n">lp_prop</span><span class="p">,</span> <span class="n">lp_prev</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute log acceptance probability (minimum of 0 and log acceptance rate)</span>
 <span class="sd">    Decide whether to accept (1) or reject (0)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># U[0, 1]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># U[0, 1]</span>
     <span class="n">logalpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lp_prop</span> <span class="o">-</span> <span class="n">lp_prev</span><span class="p">)</span>  <span class="c1"># log acceptance probability</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">logalpha</span><span class="p">:</span>
-        <span class="k">return</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Accept</span>
+        <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># Accept</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Reject</span>
+        <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># Reject</span>
 
-<span class="k">def</span> <span class="nf">MCMC_run</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">,</span>
-                   <span class="n">Ntotal</span><span class="p">,</span> <span class="n">param_start</span><span class="p">,</span> <span class="n">printerval</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
-                   <span class="n">a_var_prop</span> <span class="o">=</span> <span class="mf">1e-23</span><span class="p">,</span> <span class="n">f_var_prop</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="n">fdot_var_prop</span> <span class="o">=</span> <span class="mf">1e-13</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">MCMC_run</span><span class="p">(</span>
+    <span class="n">data_f</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="n">variance_noise_f</span><span class="p">,</span>
+    <span class="n">Ntotal</span><span class="p">,</span>
+    <span class="n">param_start</span><span class="p">,</span>
+    <span class="n">printerval</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">a_var_prop</span><span class="o">=</span><span class="mf">1e-23</span><span class="p">,</span>
+    <span class="n">f_var_prop</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span>
+    <span class="n">fdot_var_prop</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metropolis MCMC sampler</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">plot_direc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/plots&quot;</span>
     <span class="c1"># Set starting values</span>
@@ -502,19 +548,30 @@ document.write(`
 
     <span class="c1"># Initial signal</span>
 
-    <span class="n">signal_init_t</span> <span class="o">=</span> <span class="n">waveform</span><span class="p">(</span><span class="n">a_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">f_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fdot_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">t</span><span class="p">)</span>   <span class="c1"># Initial time domain signal</span>
+    <span class="n">signal_init_t</span> <span class="o">=</span> <span class="n">waveform</span><span class="p">(</span>
+        <span class="n">a_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fdot_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span>
+    <span class="p">)</span>  <span class="c1"># Initial time domain signal</span>
     <span class="n">signal_init_f</span> <span class="o">=</span> <span class="n">FFT</span><span class="p">(</span><span class="n">signal_init_t</span><span class="p">)</span>  <span class="c1"># Intial frequency domain signal</span>
 
     <span class="c1"># for plots -- uncomment if you don&#39;t care.</span>
 
-    <span class="n">params</span> <span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(a)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(f)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\dot</span><span class="si">{f}</span><span class="s2">)$&quot;</span><span class="p">]</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(a)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(f)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\dot</span><span class="si">{f}</span><span class="s2">)$&quot;</span><span class="p">]</span>
     <span class="n">N_param</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
     <span class="n">signal_prop_f</span> <span class="o">=</span> <span class="n">signal_init_f</span>
 
     <span class="c1"># Initial value for log posterior</span>
     <span class="n">lp</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">lp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lpost</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span> <span class="n">signal_init_f</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">,</span> <span class="n">a_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">fdot_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>  <span class="c1"># Append first value of log posterior</span>
+    <span class="n">lp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">lpost</span><span class="p">(</span>
+            <span class="n">data_f</span><span class="p">,</span>
+            <span class="n">signal_init_f</span><span class="p">,</span>
+            <span class="n">variance_noise_f</span><span class="p">,</span>
+            <span class="n">a_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">f_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">fdot_chain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># Append first value of log posterior</span>
 
     <span class="n">lp_store</span> <span class="o">=</span> <span class="n">lp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Create log posterior storage to be overwritten</span>
 
@@ -524,10 +581,15 @@ document.write(`
     <span class="n">accept_reject_count</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Ntotal</span><span class="p">)):</span>
-
-        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">printerval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># Print accept/reject ratio.</span>
-            <span class="n">accept_reject_ratio</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">accept_reject_count</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">accept_reject_count</span><span class="p">)</span>
-            <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Iteration </span><span class="si">{0}</span><span class="s2">, accept_reject = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">accept_reject_ratio</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">printerval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Print accept/reject ratio.</span>
+            <span class="n">accept_reject_ratio</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">accept_reject_count</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">accept_reject_count</span>
+            <span class="p">)</span>
+            <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s2">&quot;Iteration </span><span class="si">{0}</span><span class="s2">, accept_reject = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">i</span><span class="p">,</span> <span class="n">accept_reject_ratio</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="n">lp_prev</span> <span class="o">=</span> <span class="n">lp_store</span>  <span class="c1"># Call previous stored log posterior</span>
 
@@ -535,25 +597,27 @@ document.write(`
 
         <span class="n">a_prop</span> <span class="o">=</span> <span class="n">a_chain</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a_var_prop</span><span class="p">))</span>
         <span class="n">f_prop</span> <span class="o">=</span> <span class="n">f_chain</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">f_var_prop</span><span class="p">))</span>
-        <span class="n">fdot_prop</span> <span class="o">=</span> <span class="n">fdot_chain</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fdot_var_prop</span><span class="p">))</span>
+        <span class="n">fdot_prop</span> <span class="o">=</span> <span class="n">fdot_chain</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fdot_var_prop</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># Propose a new signal</span>
-        <span class="n">signal_prop_t</span> <span class="o">=</span> <span class="n">waveform</span><span class="p">(</span><span class="n">a_prop</span><span class="p">,</span><span class="n">f_prop</span><span class="p">,</span><span class="n">fdot_prop</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">signal_prop_t</span> <span class="o">=</span> <span class="n">waveform</span><span class="p">(</span><span class="n">a_prop</span><span class="p">,</span> <span class="n">f_prop</span><span class="p">,</span> <span class="n">fdot_prop</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
         <span class="n">signal_prop_f</span> <span class="o">=</span> <span class="n">FFT</span><span class="p">(</span><span class="n">signal_prop_t</span><span class="p">)</span>
 
-
         <span class="c1"># Compute log posterior</span>
-        <span class="n">lp_prop</span> <span class="o">=</span> <span class="n">lpost</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span><span class="n">signal_prop_f</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">,</span>
-                        <span class="n">a_prop</span><span class="p">,</span> <span class="n">f_prop</span><span class="p">,</span> <span class="n">fdot_prop</span><span class="p">)</span>
+        <span class="n">lp_prop</span> <span class="o">=</span> <span class="n">lpost</span><span class="p">(</span>
+            <span class="n">data_f</span><span class="p">,</span> <span class="n">signal_prop_f</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">,</span> <span class="n">a_prop</span><span class="p">,</span> <span class="n">f_prop</span><span class="p">,</span> <span class="n">fdot_prop</span>
+        <span class="p">)</span>
 
         <span class="c1">####</span>
         <span class="c1"># Perform accept_reject call</span>
         <span class="c1">####</span>
         <span class="c1"># breakpoint()</span>
         <span class="k">if</span> <span class="n">accept_reject</span><span class="p">(</span><span class="n">lp_prop</span><span class="p">,</span> <span class="n">lp_prev</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Accept</span>
-            <span class="n">f_chain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f_prop</span><span class="p">)</span>    <span class="c1"># accept a_{prop} as new sample</span>
-            <span class="n">a_chain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_prop</span><span class="p">)</span>    <span class="c1"># accept f_{prop} as new sample</span>
-            <span class="n">fdot_chain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fdot_prop</span><span class="p">)</span>    <span class="c1"># accept \dot{f}_{prop} as new sample</span>
+            <span class="n">f_chain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f_prop</span><span class="p">)</span>  <span class="c1"># accept a_{prop} as new sample</span>
+            <span class="n">a_chain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_prop</span><span class="p">)</span>  <span class="c1"># accept f_{prop} as new sample</span>
+            <span class="n">fdot_chain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fdot_prop</span><span class="p">)</span>  <span class="c1"># accept \dot{f}_{prop} as new sample</span>
             <span class="n">accept_reject_count</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">lp_store</span> <span class="o">=</span> <span class="n">lp_prop</span>  <span class="c1"># Overwrite lp_store</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># Reject, if this is the case we use previously accepted values</span>
@@ -570,8 +634,7 @@ document.write(`
     <span class="n">f_chain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f_chain</span><span class="p">)</span>
     <span class="n">fdot_chain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fdot_chain</span><span class="p">)</span>
 
-
-    <span class="k">return</span> <span class="n">a_chain</span><span class="p">,</span><span class="n">f_chain</span><span class="p">,</span> <span class="n">fdot_chain</span><span class="p">,</span><span class="n">lp</span>  <span class="c1"># Return chains and log posterior.</span>
+    <span class="k">return</span> <span class="n">a_chain</span><span class="p">,</span> <span class="n">f_chain</span><span class="p">,</span> <span class="n">fdot_chain</span><span class="p">,</span> <span class="n">lp</span>  <span class="c1"># Return chains and log posterior.</span>
 </pre></div>
 </div>
 </div>
@@ -583,6 +646,7 @@ document.write(`
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">corner</span> <span class="kn">import</span> <span class="n">corner</span>
+
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
 
 <span class="c1"># Set true parameters. These are the parameters we want to estimate using MCMC.</span>
@@ -591,24 +655,36 @@ document.write(`
 <span class="n">f_true</span> <span class="o">=</span> <span class="mf">1e-3</span>
 <span class="n">fdot_true</span> <span class="o">=</span> <span class="mf">1e-8</span>
 
-<span class="n">tmax</span> <span class="o">=</span>  <span class="mi">120</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span>                 <span class="c1"># Final time</span>
-<span class="n">fs</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">f_true</span>                     <span class="c1"># Sampling rate</span>
-<span class="n">delta_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="mf">0.01</span><span class="o">/</span><span class="n">fs</span><span class="p">)</span>       <span class="c1"># Sampling interval -- largely oversampling here.</span>
+<span class="n">tmax</span> <span class="o">=</span> <span class="mi">120</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># Final time</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">f_true</span>  <span class="c1"># Sampling rate</span>
+<span class="n">delta_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span>
+    <span class="mf">0.01</span> <span class="o">/</span> <span class="n">fs</span>
+<span class="p">)</span>  <span class="c1"># Sampling interval -- largely oversampling here.</span>
 
-<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">tmax</span><span class="p">,</span><span class="n">delta_t</span><span class="p">)</span>     <span class="c1"># Form time vector from t0 = 0 to t_{n-1} = tmax. Length N [include zero]</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+    <span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">delta_t</span>
+<span class="p">)</span>  <span class="c1"># Form time vector from t0 = 0 to t_{n-1} = tmax. Length N [include zero]</span>
 
-<span class="n">N_t</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)))))</span>   <span class="c1"># Round length of time series to a power of two.</span>
-                                           <span class="c1"># Length of time series</span>
+<span class="n">N_t</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+    <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))))</span>
+<span class="p">)</span>  <span class="c1"># Round length of time series to a power of two.</span>
+<span class="c1"># Length of time series</span>
 
-<span class="n">h_true_f</span> <span class="o">=</span> <span class="n">FFT</span><span class="p">(</span><span class="n">waveform</span><span class="p">(</span><span class="n">a_true</span><span class="p">,</span><span class="n">f_true</span><span class="p">,</span><span class="n">fdot_true</span><span class="p">,</span><span class="n">t</span><span class="p">))</span>         <span class="c1"># Compute true signal in</span>
-                                                            <span class="c1"># frequency domain. Real signal so only considering</span>
-                                                            <span class="c1"># positive frequencies here.</span>
+<span class="n">h_true_f</span> <span class="o">=</span> <span class="n">FFT</span><span class="p">(</span>
+    <span class="n">waveform</span><span class="p">(</span><span class="n">a_true</span><span class="p">,</span> <span class="n">f_true</span><span class="p">,</span> <span class="n">fdot_true</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="p">)</span>  <span class="c1"># Compute true signal in</span>
+<span class="c1"># frequency domain. Real signal so only considering</span>
+<span class="c1"># positive frequencies here.</span>
 
-<span class="n">freq</span><span class="p">,</span><span class="n">PSD</span> <span class="o">=</span> <span class="n">freq_PSD</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">delta_t</span><span class="p">)</span>  <span class="c1"># Extract frequency bins and PSD.</span>
+<span class="n">freq</span><span class="p">,</span> <span class="n">PSD</span> <span class="o">=</span> <span class="n">freq_PSD</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>  <span class="c1"># Extract frequency bins and PSD.</span>
 
-<span class="n">SNR2</span> <span class="o">=</span> <span class="n">inner_prod</span><span class="p">(</span><span class="n">h_true_f</span><span class="p">,</span><span class="n">h_true_f</span><span class="p">,</span><span class="n">PSD</span><span class="p">,</span><span class="n">delta_t</span><span class="p">,</span><span class="n">N_t</span><span class="p">)</span>    <span class="c1"># Compute optimal matched filtering SNR</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SNR of source&quot;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">SNR2</span><span class="p">))</span>
-<span class="n">variance_noise_f</span> <span class="o">=</span> <span class="n">N_t</span> <span class="o">*</span> <span class="n">PSD</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>            <span class="c1"># Calculate variance of noise, real and imaginary.</span>
+<span class="n">SNR2</span> <span class="o">=</span> <span class="n">inner_prod</span><span class="p">(</span>
+    <span class="n">h_true_f</span><span class="p">,</span> <span class="n">h_true_f</span><span class="p">,</span> <span class="n">PSD</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">N_t</span>
+<span class="p">)</span>  <span class="c1"># Compute optimal matched filtering SNR</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SNR of source&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">SNR2</span><span class="p">))</span>
+<span class="n">variance_noise_f</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">N_t</span> <span class="o">*</span> <span class="n">PSD</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>
+<span class="p">)</span>  <span class="c1"># Calculate variance of noise, real and imaginary.</span>
 </pre></div>
 </div>
 </div>
@@ -620,8 +696,10 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">PSD</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;tab:blue&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Noise&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">h_true_f</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;tab:orange&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Signal&quot;</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">PSD</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Noise&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">freq</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">h_true_f</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:orange&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Signal&quot;</span>
+<span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Frequency (Hz)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;PSD&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -637,13 +715,15 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">N_f</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">variance_noise_f</span><span class="p">)</span>                             <span class="c1"># Length of signal in frequency domain</span>
-<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1235</span><span class="p">)</span>                                    <span class="c1"># Set the seed</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">N_f</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">variance_noise_f</span><span class="p">)</span>  <span class="c1"># Length of signal in frequency domain</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1235</span><span class="p">)</span>  <span class="c1"># Set the seed</span>
 
 <span class="c1"># Generate frequency domain noise</span>
-<span class="n">noise_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance_noise_f</span><span class="p">),</span><span class="n">N_f</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance_noise_f</span><span class="p">),</span><span class="n">N_f</span><span class="p">)</span>
+<span class="n">noise_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+    <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance_noise_f</span><span class="p">),</span> <span class="n">N_f</span>
+<span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance_noise_f</span><span class="p">),</span> <span class="n">N_f</span><span class="p">)</span>
 
-<span class="n">data_f</span> <span class="o">=</span> <span class="n">h_true_f</span> <span class="o">+</span> <span class="n">noise_f</span>         <span class="c1"># Construct data stream</span>
+<span class="n">data_f</span> <span class="o">=</span> <span class="n">h_true_f</span> <span class="o">+</span> <span class="n">noise_f</span>  <span class="c1"># Construct data stream</span>
 </pre></div>
 </div>
 </div>
@@ -653,8 +733,8 @@ document.write(`
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># MCMC - parameter estimation</span>
 
 <span class="n">Ntotal</span> <span class="o">=</span> <span class="mi">30000</span>  <span class="c1"># Total number of iterations</span>
-<span class="n">burnin</span> <span class="o">=</span> <span class="mi">6000</span>   <span class="c1"># Set burn-in. This is the amount of samples we will discard whilst looking</span>
-             <span class="c1"># for the true parameters</span>
+<span class="n">burnin</span> <span class="o">=</span> <span class="mi">6000</span>  <span class="c1"># Set burn-in. This is the amount of samples we will discard whilst looking</span>
+<span class="c1"># for the true parameters</span>
 
 <span class="n">variance_noise_f</span> <span class="o">=</span> <span class="n">N_t</span> <span class="o">*</span> <span class="n">PSD</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>
 
@@ -662,20 +742,41 @@ document.write(`
 <span class="n">delta_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.122370011848878e-17</span><span class="p">)</span>
 <span class="n">delta_dotf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.007508992696005e-27</span><span class="p">)</span>
 
-<span class="n">param_start</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_true</span> <span class="o">+</span> <span class="mi">1000</span><span class="o">*</span><span class="n">delta_a</span><span class="p">,</span> <span class="n">f_true</span> <span class="o">+</span> <span class="mi">750</span><span class="o">*</span><span class="n">delta_f</span><span class="p">,</span> <span class="n">fdot_true</span> <span class="o">-</span> <span class="mi">750</span><span class="o">*</span><span class="n">delta_dotf</span><span class="p">]</span>  <span class="c1"># Starting values</span>
-<span class="n">true_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_true</span><span class="p">,</span><span class="n">f_true</span><span class="p">,</span> <span class="n">fdot_true</span><span class="p">]</span>   <span class="c1"># True values</span>
+<span class="n">param_start</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">a_true</span> <span class="o">+</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">delta_a</span><span class="p">,</span>
+    <span class="n">f_true</span> <span class="o">+</span> <span class="mi">750</span> <span class="o">*</span> <span class="n">delta_f</span><span class="p">,</span>
+    <span class="n">fdot_true</span> <span class="o">-</span> <span class="mi">750</span> <span class="o">*</span> <span class="n">delta_dotf</span><span class="p">,</span>
+<span class="p">]</span>  <span class="c1"># Starting values</span>
+<span class="n">true_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_true</span><span class="p">,</span> <span class="n">f_true</span><span class="p">,</span> <span class="n">fdot_true</span><span class="p">]</span>  <span class="c1"># True values</span>
 
-<span class="n">a_chain</span><span class="p">,</span><span class="n">f_chain</span><span class="p">,</span><span class="n">fdot_chain</span><span class="p">,</span><span class="n">lp</span>  <span class="o">=</span> <span class="n">MCMC_run</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">,</span>
-                            <span class="n">Ntotal</span><span class="p">,</span> <span class="n">param_start</span><span class="p">,</span>
-                            <span class="n">printerval</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
-                            <span class="n">a_var_prop</span> <span class="o">=</span> <span class="n">delta_a</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
-                            <span class="n">f_var_prop</span> <span class="o">=</span> <span class="n">delta_f</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
-                            <span class="n">fdot_var_prop</span> <span class="o">=</span> <span class="n">delta_dotf</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">a_chain</span><span class="p">,</span> <span class="n">f_chain</span><span class="p">,</span> <span class="n">fdot_chain</span><span class="p">,</span> <span class="n">lp</span> <span class="o">=</span> <span class="n">MCMC_run</span><span class="p">(</span>
+    <span class="n">data_f</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="n">variance_noise_f</span><span class="p">,</span>
+    <span class="n">Ntotal</span><span class="p">,</span>
+    <span class="n">param_start</span><span class="p">,</span>
+    <span class="n">printerval</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+    <span class="n">a_var_prop</span><span class="o">=</span><span class="n">delta_a</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">f_var_prop</span><span class="o">=</span><span class="n">delta_f</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">fdot_var_prop</span><span class="o">=</span><span class="n">delta_dotf</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now printing summary statistics:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Posterior mean value is E(a) = </span><span class="si">{0}</span><span class="s2">, and standard deviation delta_a = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">a_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]),</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">a_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]))))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Posterior mean value is E(f) = </span><span class="si">{0}</span><span class="s2">, and standard deviation delta_f = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">f_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">f_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]))))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Posterior mean value is E(fdot) = </span><span class="si">{0}</span><span class="s2">, and standard deviation is delta_fdot = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">fdot_chain</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">fdot_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]))))</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Posterior mean value is E(a) = </span><span class="si">{0}</span><span class="s2">, and standard deviation delta_a = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">a_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">a_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]))</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Posterior mean value is E(f) = </span><span class="si">{0}</span><span class="s2">, and standard deviation delta_f = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">f_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">f_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]))</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Posterior mean value is E(fdot) = </span><span class="si">{0}</span><span class="s2">, and standard deviation is delta_fdot = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">fdot_chain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">fdot_chain</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]))</span>
+    <span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -726,9 +827,17 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(a)$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(f_</span><span class="si">{0}</span><span class="s1">)$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(\dot</span><span class="si">{f}</span><span class="s1">_</span><span class="si">{0}</span><span class="s1">)$&#39;</span><span class="p">]</span>  <span class="c1"># Set parameter labels</span>
-<span class="n">N_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>   <span class="c1"># Set number of parameters to investigate</span>
-<span class="n">true_vals_for_plot</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">true_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">true_vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">true_vals</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>  <span class="c1"># Set true values (log)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(a)$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(f_</span><span class="si">{0}</span><span class="s2">)$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\dot</span><span class="si">{f}</span><span class="s2">_</span><span class="si">{0}</span><span class="s2">)$&quot;</span><span class="p">,</span>
+<span class="p">]</span>  <span class="c1"># Set parameter labels</span>
+<span class="n">N_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>  <span class="c1"># Set number of parameters to investigate</span>
+<span class="n">true_vals_for_plot</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">true_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">true_vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">true_vals</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+<span class="p">]</span>  <span class="c1"># Set true values (log)</span>
 
 <span class="c1"># Plot trace plot</span>
 
@@ -736,15 +845,20 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
 <span class="n">f_chain_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f_chain</span><span class="p">))</span>
 <span class="n">fdot_chain_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fdot_chain</span><span class="p">))</span>
 <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_chain_log</span><span class="p">,</span> <span class="n">f_chain_log</span><span class="p">,</span> <span class="n">fdot_chain_log</span><span class="p">]</span>  <span class="c1"># Store samples in a list</span>
-<span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;green&#39;</span><span class="p">,</span><span class="s1">&#39;black&#39;</span><span class="p">,</span><span class="s1">&#39;purple&#39;</span><span class="p">]</span>  <span class="c1"># Set pretty colours</span>
+<span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="s2">&quot;purple&quot;</span><span class="p">]</span>  <span class="c1"># Set pretty colours</span>
 
-<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Accepted points&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;True value&#39;</span><span class="p">,</span> <span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Iteration&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Accepted points&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">k</span><span class="p">],</span>
+        <span class="n">c</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True value&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Iteration&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Trace plots&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
@@ -762,18 +876,29 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot trace plot after burnin</span>
 
-<span class="n">a_chain_log_burnin</span> <span class="o">=</span> <span class="n">a_chain_log</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]</span>   <span class="c1"># Discard the first 0, ..., burnin samples from each chain</span>
+<span class="n">a_chain_log_burnin</span> <span class="o">=</span> <span class="n">a_chain_log</span><span class="p">[</span>
+    <span class="n">burnin</span><span class="p">:</span>
+<span class="p">]</span>  <span class="c1"># Discard the first 0, ..., burnin samples from each chain</span>
 <span class="n">f_chain_log_burnin</span> <span class="o">=</span> <span class="n">f_chain_log</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]</span>
 <span class="n">fdot_chain_log_burnin</span> <span class="o">=</span> <span class="n">fdot_chain_log</span><span class="p">[</span><span class="n">burnin</span><span class="p">:]</span>
-<span class="n">samples_burned</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_chain_log_burnin</span><span class="p">,</span> <span class="n">f_chain_log_burnin</span><span class="p">,</span> <span class="n">fdot_chain_log_burnin</span><span class="p">]</span>
+<span class="n">samples_burned</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">a_chain_log_burnin</span><span class="p">,</span>
+    <span class="n">f_chain_log_burnin</span><span class="p">,</span>
+    <span class="n">fdot_chain_log_burnin</span><span class="p">,</span>
+<span class="p">]</span>
 
-<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">samples_burned</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Accepted points&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;True value&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Iteration&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">samples_burned</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Accepted points&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">k</span><span class="p">],</span>
+        <span class="n">c</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True value&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Iteration&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Trace plots after burnin&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
@@ -792,14 +917,24 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot corner plot</span>
 
 <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">samples_burned</span><span class="p">)</span>  <span class="c1"># Stack samples to plot corner plot</span>
-<span class="n">figure</span> <span class="o">=</span> <span class="n">corner</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">bins</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span><span class="n">plot_datapoints</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">smooth1d</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">labels</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-                    <span class="n">label_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span><span class="mi">12</span><span class="p">},</span><span class="n">set_xlabel</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">},</span>
-                    <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title_fmt</span><span class="o">=</span><span class="s1">&#39;.7f&#39;</span><span class="p">,</span><span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span><span class="n">smooth</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">corner</span><span class="p">(</span>
+    <span class="n">samples</span><span class="p">,</span>
+    <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="n">plot_datapoints</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">smooth1d</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+    <span class="n">label_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="n">set_xlabel</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">},</span>
+    <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">title_fmt</span><span class="o">=</span><span class="s2">&quot;.7f&quot;</span><span class="p">,</span>
+    <span class="n">title_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span>
+    <span class="n">smooth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">figure</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">N_params</span><span class="p">,</span> <span class="n">N_params</span><span class="p">))</span>
 
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_params</span><span class="p">):</span>   <span class="c1"># Plot true values on corner plot (diagonals)</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_params</span><span class="p">):</span>  <span class="c1"># Plot true values on corner plot (diagonals)</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
 
@@ -807,11 +942,11 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
     <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">yi</span><span class="p">):</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">yi</span><span class="p">,</span> <span class="n">xi</span><span class="p">]</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">yi</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">xi</span><span class="p">],</span><span class="n">color</span><span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">xi</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">xi</span><span class="p">],</span> <span class="n">true_vals_for_plot</span><span class="p">[</span><span class="n">yi</span><span class="p">],</span> <span class="s2">&quot;sr&quot;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">figure</span><span class="o">.</span><span class="n">get_axes</span><span class="p">():</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>   <span class="c1"># Set font of labels</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>  <span class="c1"># Set font of labels</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
 </pre></div>
@@ -854,7 +989,7 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
               
               
                 <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                  
 <div class="prev-next-area">
     <a class="left-prev"
        href="roundtrip_demo.html"
@@ -888,6 +1023,7 @@ By The Jupyter Book Community
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2022.
@@ -914,8 +1050,8 @@ By The Jupyter Book Community
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>
