@@ -696,9 +696,9 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">PSD</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Noise&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">freq</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">h_true_f</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:orange&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Signal&quot;</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">freq</span><span class="o">*</span><span class="n">PSD</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Noise&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span>
+    <span class="n">freq</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">freq</span><span class="o">*</span><span class="n">h_true_f</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:orange&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Signal&quot;</span>
 <span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Frequency (Hz)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;PSD&quot;</span><span class="p">)</span>
@@ -707,10 +707,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x132e15790&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x13f96bd00&gt;
 </pre></div>
 </div>
-<img alt="../_images/dde4ed9f38a66d35472b8002f333496b6fede58c31c2153f779c27fb9b66c8f6.png" src="../_images/dde4ed9f38a66d35472b8002f333496b6fede58c31c2153f779c27fb9b66c8f6.png" />
+<img alt="../_images/d81890144344af2faea2d26fed6ad6c52cabefabe50f0750c4c08fa8e2373ac0.png" src="../_images/d81890144344af2faea2d26fed6ad6c52cabefabe50f0750c4c08fa8e2373ac0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -781,46 +781,40 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 17%|█▋        | 5012/29999 [00:56&lt;04:38, 89.71it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  9%|▊         | 2604/29999 [00:31&lt;05:31, 82.76it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 5000, accept_reject = 0.4658
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 33%|███▎      | 10014/29999 [01:53&lt;03:45, 88.50it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 10000, accept_reject = 0.389
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 50%|█████     | 15011/29999 [02:53&lt;02:57, 84.30it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 15000, accept_reject = 0.36173333333333335
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 67%|██████▋   | 20009/29999 [03:48&lt;01:42, 97.34it/s] 
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 20000, accept_reject = 0.3505
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 83%|████████▎ | 25016/29999 [04:40&lt;00:51, 96.46it/s] 
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 25000, accept_reject = 0.34268
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 29999/29999 [05:38&lt;00:00, 88.66it/s] 
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Now printing summary statistics:
-Posterior mean value is E(a) = 5.015937502495481e-21, and standard deviation delta_a = 2.7027918329014523e-23
-Posterior mean value is E(f) = 0.001000006499867159, and standard deviation delta_f = 1.4632842491465573e-08
-Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation is delta_fdot = 8.566838045669753e-14
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="nn">/var/folders/qt/rxjvm_j566v9qn7g754s1v9hzb3p7f/T/ipykernel_23318/972300399.py</span> in <span class="ni">&lt;cell line: 20&gt;</span><span class="nt">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="n">true_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_true</span><span class="p">,</span> <span class="n">f_true</span><span class="p">,</span> <span class="n">fdot_true</span><span class="p">]</span>  <span class="c1"># True values</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span> 
+<span class="ne">---&gt; </span><span class="mi">20</span> <span class="n">a_chain</span><span class="p">,</span> <span class="n">f_chain</span><span class="p">,</span> <span class="n">fdot_chain</span><span class="p">,</span> <span class="n">lp</span> <span class="o">=</span> <span class="n">MCMC_run</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">21</span>     <span class="n">data_f</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">22</span>     <span class="n">t</span><span class="p">,</span>
+
+<span class="nn">/var/folders/qt/rxjvm_j566v9qn7g754s1v9hzb3p7f/T/ipykernel_23318/3683721238.py</span> in <span class="ni">MCMC_run</span><span class="nt">(data_f, t, variance_noise_f, Ntotal, param_start, printerval, a_var_prop, f_var_prop, fdot_var_prop)</span>
+<span class="g g-Whitespace">    </span><span class="mi">149</span> 
+<span class="g g-Whitespace">    </span><span class="mi">150</span>         <span class="c1"># Compute log posterior</span>
+<span class="ne">--&gt; </span><span class="mi">151</span>         <span class="n">lp_prop</span> <span class="o">=</span> <span class="n">lpost</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">152</span>             <span class="n">data_f</span><span class="p">,</span> <span class="n">signal_prop_f</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">,</span> <span class="n">a_prop</span><span class="p">,</span> <span class="n">f_prop</span><span class="p">,</span> <span class="n">fdot_prop</span>
+<span class="g g-Whitespace">    </span><span class="mi">153</span>         <span class="p">)</span>
+
+<span class="nn">/var/folders/qt/rxjvm_j566v9qn7g754s1v9hzb3p7f/T/ipykernel_23318/3683721238.py</span> in <span class="ni">lpost</span><span class="nt">(data_f, signal_f, variance_noise_f, param1, param2, param3, param1_low_range, param1_high_range, param2_low_range, param2_high_range, param3_low_range, param3_high_range)</span>
+<span class="g g-Whitespace">     </span><span class="mi">50</span>         <span class="o">+</span> <span class="n">lprior_uniform</span><span class="p">(</span><span class="n">param2</span><span class="p">,</span> <span class="n">param2_low_range</span><span class="p">,</span> <span class="n">param2_high_range</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">51</span>         <span class="o">+</span> <span class="n">lprior_uniform</span><span class="p">(</span><span class="n">param3</span><span class="p">,</span> <span class="n">param3_low_range</span><span class="p">,</span> <span class="n">param3_high_range</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">52</span>         <span class="o">+</span> <span class="n">llike</span><span class="p">(</span><span class="n">data_f</span><span class="p">,</span> <span class="n">signal_f</span><span class="p">,</span> <span class="n">variance_noise_f</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">53</span>     <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">54</span> 
+
+<span class="nn">/var/folders/qt/rxjvm_j566v9qn7g754s1v9hzb3p7f/T/ipykernel_23318/3683721238.py</span> in <span class="ni">llike</span><span class="nt">(data_f, signal_f, variance_noise_f)</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span>     <span class="n">Variance</span> <span class="n">of</span> <span class="n">noise</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">---&gt; </span><span class="mi">16</span><span class="s2">     inn_prod = sum((abs(data_f - signal_f) ** 2) / variance_noise_f)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span><span class="s2">     # print(inn_prod)</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span><span class="s2">     return -0.5 * inn_prod</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
 </pre></div>
 </div>
 </div>
@@ -865,12 +859,6 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<img alt="../_images/b815535a283438c51e922997b81dff1cd2bbb952f652cc7ff95083e7bf43f835.png" src="../_images/b815535a283438c51e922997b81dff1cd2bbb952f652cc7ff95083e7bf43f835.png" />
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 432x288 with 0 Axes&gt;
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -902,12 +890,6 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Trace plots after burnin&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/b7ad26319ddcdc88558ac135a451f488fe318b8e17b5a6585541024a4138803e.png" src="../_images/b7ad26319ddcdc88558ac135a451f488fe318b8e17b5a6585541024a4138803e.png" />
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 432x288 with 0 Axes&gt;
 </pre></div>
 </div>
 </div>
@@ -949,12 +931,6 @@ Posterior mean value is E(fdot) = 9.997046214647843e-09, and standard deviation 
     <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>  <span class="c1"># Set font of labels</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/37b45431fcb3191aa9e7e6a57c2bcddf53a4ea7e9a13ac0b61602f4f484511fc.png" src="../_images/37b45431fcb3191aa9e7e6a57c2bcddf53a4ea7e9a13ac0b61602f4f484511fc.png" />
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 432x288 with 0 Axes&gt;
 </pre></div>
 </div>
 </div>
