@@ -360,7 +360,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports">1. Imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports-magic">1. Imports + Magic</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-data">2. Generate data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-frequency-domain-analytical-spectrum">3. Build frequency-domain analytical spectrum</a></li>
 </ul>
@@ -376,20 +376,31 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="noise-in-the-wavelet-domain">
 <h1>Noise in the wavelet domain<a class="headerlink" href="#noise-in-the-wavelet-domain" title="Permalink to this heading">#</a></h1>
-<section id="imports">
-<h2>1. Imports<a class="headerlink" href="#imports" title="Permalink to this heading">#</a></h2>
+<p>Lets assume that an evolutionary spectrum is given by</p>
+<p><span class="math notranslate nohighlight">\(S(t, f) = S_{n}(f) \left(1 + \alpha \cos(2 \pi f_0 t)\right)^2\)</span></p>
+<p>We use the LISA PSD as the noise spectrum <span class="math notranslate nohighlight">\(S_{n}(f)\)</span> and we assume that the noise is modulated by a cosine function with amplitude <span class="math notranslate nohighlight">\(A\)</span>, frequency <span class="math notranslate nohighlight">\(f_0\)</span>.</p>
+<section id="imports-magic">
+<h2>1. Imports + Magic<a class="headerlink" href="#imports-magic" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="c1"># from backgrounds import plotting</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">pywavelet.utils.lisa</span> <span class="kn">import</span> <span class="n">lisa_psd</span><span class="p">,</span> <span class="n">periodogram</span><span class="p">,</span> <span class="n">generate_noise</span><span class="p">,</span> <span class="n">TimeSeries</span>
+
+
+<span class="n">DATA_COL</span> <span class="o">=</span> <span class="s2">&quot;tab:gray&quot;</span>
+<span class="n">TRUE_COL</span> <span class="o">=</span> <span class="s2">&quot;tab:orange&quot;</span>
+
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;frozen importlib._bootstrap&gt;:219: RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 216 from C header, got 232 from PyObject
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
 </pre></div>
 </div>
 </div>
@@ -399,256 +410,78 @@ document.write(`
 <h2>2. Generate data<a class="headerlink" href="#generate-data" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">generate_noise</span><span class="p">(</span><span class="n">psd_func</span><span class="p">,</span> <span class="n">n_data</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Noise generator from arbitrary power spectral density.</span>
-<span class="sd">    Uses a Gaussian random generation in the frequency domain.</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mi">120</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># Final time</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># Sampling rate</span>
+<span class="n">delta_t</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">fs</span>  <span class="c1"># Sampling interval -- largely oversampling here.</span>
+<span class="n">n_data</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tmax</span> <span class="o">/</span> <span class="n">delta_t</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">lisa_psd</span><span class="p">,</span> <span class="n">n_data</span><span class="o">=</span><span class="n">n_data</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="n">tmax</span><span class="p">)</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    psd_func: callable</span>
-<span class="sd">        one-sided PSD function in A^2 / Hz, where A is the unit of the desired</span>
-<span class="sd">        output time series. Can also return a p x p spectrum matrix</span>
-<span class="sd">    n_data: int</span>
-<span class="sd">        size of output time series</span>
-<span class="sd">    fs: float</span>
-<span class="sd">        sampling frequency in Hz</span>
+<span class="n">prdgm</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">true_psd</span> <span class="o">=</span> <span class="n">lisa_psd</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
 
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    tseries: ndarray</span>
-<span class="sd">        generated time series</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Number of points to generate in the frequency domain (circulant embedding)</span>
-    <span class="n">n_psd</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_data</span>
-    <span class="c1"># Number of positive frequencies</span>
-    <span class="n">n_fft</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">n_psd</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-    <span class="c1"># Frequency array</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">n_psd</span><span class="p">)</span><span class="o">*</span><span class="n">fs</span>
-    <span class="c1"># Avoid zero frequency as it sometimes makes the PSD infinite</span>
-    <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="c1"># Compute the PSD (or the spectrum matrix)</span>
-    <span class="n">psd_f</span> <span class="o">=</span> <span class="n">psd_func</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="n">psd_f</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">psd_sqrt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">psd_f</span><span class="p">)</span>
-        <span class="c1"># Real part of the Noise fft : it is a gaussian random variable</span>
-        <span class="n">noise_tf_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">psd_sqrt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n_fft</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-            <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_fft</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="c1"># Imaginary part of the Noise fft :</span>
-        <span class="n">noise_tf_im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">psd_sqrt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n_fft</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-            <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_fft</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="c1"># The Fourier transform must be real in f = 0</span>
-        <span class="n">noise_tf_im</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="n">noise_tf_real</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">noise_tf_real</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span>
-        <span class="c1"># Create the NoiseTF complex numbers for positive frequencies</span>
-        <span class="n">noise_tf</span> <span class="o">=</span> <span class="n">noise_tf_real</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">noise_tf_im</span>
-
-    <span class="c1"># To get a real valued signal we must have NoiseTF(-f) = NoiseTF*</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">n_psd</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">psd_f</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="c1"># The TF at Nyquist frequency must be real in the case of an even</span>
-        <span class="c1"># number of data</span>
-        <span class="n">noise_sym0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">psd_sqrt</span><span class="p">[</span><span class="n">n_fft</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
-        <span class="c1"># Add the symmetric part corresponding to negative frequencies</span>
-        <span class="n">noise_tf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">noise_tf</span><span class="p">,</span> <span class="n">noise_sym0</span><span class="p">,</span>
-                              <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">noise_tf</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">n_fft</span><span class="o">+</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">n_psd</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">psd_f</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">noise_tf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">noise_tf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">noise_tf</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">n_fft</span><span class="o">+</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-
-    <span class="n">tseries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_psd</span><span class="o">*</span><span class="n">fs</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise_tf</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">tseries</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n_data</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
-
-
-<span class="k">def</span> <span class="nf">periodogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">wd_func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">blackman</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the periodogram of a time series using the</span>
-<span class="sd">    Blackman window</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    x : ndarray</span>
-<span class="sd">        intput time series</span>
-<span class="sd">    fs : float</span>
-<span class="sd">        sampling frequency</span>
-<span class="sd">    wd_func : callable</span>
-<span class="sd">        tapering window function in the time domain</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    ndarray</span>
-<span class="sd">        periodogram at Fourier frequencies</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">wd</span> <span class="o">=</span> <span class="n">wd_func</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">k2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">wd</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">per</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">wd</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">k2</span><span class="o">*</span><span class="n">fs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">per</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">wd</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">k2</span><span class="o">*</span><span class="n">fs</span><span class="p">)</span>
-        
-    <span class="k">return</span> <span class="n">per</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">PowerSpectralDensity</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    PSD obtained from: https://arxiv.org/pdf/1803.01944.pdf</span>
-<span class="sd">    Removed galactic confusion noise. Non stationary effect.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">L</span> <span class="o">=</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span>  <span class="c1"># Length of LISA arm</span>
-    <span class="n">f0</span> <span class="o">=</span> <span class="mf">19.09</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">3</span>
-
-    <span class="n">Poms</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.5</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">11</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
-        <span class="mi">1</span> <span class="o">+</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="n">f</span><span class="p">)</span> <span class="o">**</span> <span class="mi">4</span>
-    <span class="p">)</span>  <span class="c1"># Optical Metrology Sensor</span>
-    <span class="n">Pacc</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">15</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
-        <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">f</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">f</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">3</span><span class="p">))</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
-    <span class="p">)</span>  <span class="c1"># Acceleration Noise</span>
-
-    <span class="n">PSD</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span><span class="mi">10</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">L</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-        <span class="o">*</span> <span class="p">(</span><span class="n">Poms</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">Pacc</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span><span class="p">))</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
-        <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="p">(</span><span class="n">f</span> <span class="o">/</span> <span class="n">f0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="p">)</span>  <span class="c1"># PSD</span>
-
-    <span class="k">return</span> <span class="n">PSD</span>
-
-<span class="k">def</span> <span class="nf">psd_func</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">):</span>
-    
-    <span class="c1"># if isinstance(f, np.ndarray):</span>
-    <span class="c1">#     out = np.zeros_like(f)</span>
-    <span class="c1">#     out[f&gt;=fmin] = PowerSpectralDensity(f[f&gt;fmin])</span>
-    <span class="c1">#     out[f&lt;fmin] = PowerSpectralDensity(fmin)</span>
-    <span class="c1"># elif isinstance(f, float):</span>
-    <span class="c1">#     if f &lt; fmin:</span>
-    <span class="c1">#         out = PowerSpectralDensity(fmin)</span>
-    <span class="c1">#     else:</span>
-    <span class="c1">#         out = PowerSpectralDensity(f)</span>
-
-    <span class="n">out</span> <span class="o">=</span> <span class="n">PowerSpectralDensity</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="n">f</span><span class="o">**</span><span class="mi">4</span>
-
-    <span class="k">return</span> <span class="n">out</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mi">120</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span>    <span class="c1"># Final time</span>
-<span class="n">fs</span> <span class="o">=</span> <span class="mf">0.1</span>           <span class="c1"># Sampling rate</span>
-<span class="n">delta_t</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">fs</span>      <span class="c1"># Sampling interval -- largely oversampling here. </span>
-<span class="n">n_data</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tmax</span><span class="o">/</span><span class="n">delta_t</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span>
-<span class="c1"># Generate stationary noise in the time domain</span>
-<span class="n">data_noise</span> <span class="o">=</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">psd_func</span><span class="p">,</span> <span class="n">n_data</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plotting.plotconfig(lbsize=17, lgsize=14, autolayout=True, figsize=[8, 6],</span>
-<span class="c1">#                     ticklabelsize=16, fsize=15, fontfamily=&#39;STIXGeneral&#39;,</span>
-<span class="c1">#                     tdir=&#39;in&#39;, major=10, minor=7, lwidth=2)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data_noise</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
-<span class="c1"># plt.savefig(&quot;../../../figures/colored_noise_time_series.pdf&quot;)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">prdgm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">DATA_COL</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">true_psd</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">TRUE_COL</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/d0b67a79ffa065a2eebebb272df8f74b7537baa73f74007fe9a3aef030c21376.png" src="../_images/d0b67a79ffa065a2eebebb272df8f74b7537baa73f74007fe9a3aef030c21376.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">n_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">fs</span>
-<span class="n">per</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">data_noise</span><span class="p">,</span> <span class="n">fs</span><span class="p">)[</span><span class="n">f</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">s_n</span> <span class="o">=</span> <span class="n">psd_func</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">f</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">f</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">],</span> <span class="n">per</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">f</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">],</span> <span class="n">s_n</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/41471a41c6f839962eb6a6e3933287c84848b3c268eccef35a3f8d5513df5255.png" src="../_images/41471a41c6f839962eb6a6e3933287c84848b3c268eccef35a3f8d5513df5255.png" />
+<img alt="../_images/cd62cf85e0fd1ccdb749bcfde5d5cc4e73d06e86a7dd44bfb65f8b4af53272bf.png" src="../_images/cd62cf85e0fd1ccdb749bcfde5d5cc4e73d06e86a7dd44bfb65f8b4af53272bf.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Apply a modulation to this noise</span>
-<span class="n">a_true</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># 5e-21</span>
-<span class="n">f_true</span> <span class="o">=</span> <span class="mf">1e-5</span>
-<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">data_noise_mod</span> <span class="o">=</span> <span class="n">data_noise</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f_true</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">amplitude</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f_true</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;../../../figures/varying_amplitude_time_series.pdf&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">A_TRUE</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># 5e-21</span>
+<span class="n">F_TRUE</span> <span class="o">=</span> <span class="mf">1e-5</span>
+<span class="n">ALPHA_TRUE</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+<span class="n">modulation</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">A_TRUE</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="mi">1</span> <span class="o">+</span> <span class="n">ALPHA_TRUE</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">F_TRUE</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">data_modulated</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">modulation</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="p">),</span> <span class="n">time</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">time</span>
+<span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">DATA_COL</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">data_modulated</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Modulated data&quot;</span>
+<span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/353d1d86f723655f5e01e7550f36f620f66b50f47b9ecb4869b922defef3fd57.png" src="../_images/353d1d86f723655f5e01e7550f36f620f66b50f47b9ecb4869b922defef3fd57.png" />
+<img alt="../_images/f5189cf68f8c2d5d73a4660a9b7e818b6d6bd161e6c30e553dc9a74c1f2d32fc.png" src="../_images/f5189cf68f8c2d5d73a4660a9b7e818b6d6bd161e6c30e553dc9a74c1f2d32fc.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data_noise_mod</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Amplitude $x(t)$&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;../../../figures/non_stationary_time_series.pdf&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prdgm_modulated</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">data_modulated</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">prdgm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">DATA_COL</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">prdgm_modulated</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Modulated data&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">true_psd</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">TRUE_COL</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/34d51d27d0ab0a1862f3238e04081d9a83147db80a196061c7b1ad98ffade6dd.png" src="../_images/34d51d27d0ab0a1862f3238e04081d9a83147db80a196061c7b1ad98ffade6dd.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">n_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">fs</span>
-<span class="n">per_mode</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">data_noise_mod</span><span class="p">,</span> <span class="n">fs</span><span class="p">)[</span><span class="n">f</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">f</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">],</span> <span class="n">per_mode</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">f</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">],</span> <span class="n">s_n</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/c3d33afb9d151f8cd82ef44ee51aaace7c7196c6b1e9dac81e92a422f7d47373.png" src="../_images/c3d33afb9d151f8cd82ef44ee51aaace7c7196c6b1e9dac81e92a422f7d47373.png" />
+<img alt="../_images/152e5e237a591913cd7b333bbdfcdc0b809a9a4b02275dfccdeffc4393599813.png" src="../_images/152e5e237a591913cd7b333bbdfcdc0b809a9a4b02275dfccdeffc4393599813.png" />
 </div>
 </div>
 </section>
@@ -657,235 +490,116 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywavelet.transforms</span> <span class="kn">import</span> <span class="n">from_time_to_wavelet</span>
-<span class="kn">from</span> <span class="nn">pywavelet.transforms</span> <span class="kn">import</span> <span class="n">common</span>
-<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LogNorm</span>
+<span class="kn">from</span> <span class="nn">pywavelet.transforms.types</span> <span class="kn">import</span> <span class="n">Wavelet</span>
 
-<span class="k">def</span> <span class="nf">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">wavelet_data</span><span class="p">,</span> <span class="n">time_grid</span><span class="p">,</span> <span class="n">freq_grid</span><span class="p">,</span> <span class="n">freq_range</span><span class="p">,</span>
-                               <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">):</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">wavelet_data</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">zscale</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">zscale</span> <span class="o">==</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
-        <span class="n">z</span><span class="p">,</span>
-        <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-        <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">time_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_grid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">freq_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">freq_grid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span>
-        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span>
-    <span class="p">)</span>
-    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-    <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;Wavelet Amplitude&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Frequency (Hz)&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="n">yscale</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">*</span><span class="n">freq_range</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">fig</span>
-
-
-<span class="c1"># fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(5, 4))</span>
-<span class="c1"># # ax.matshow(np.abs(yw))</span>
-<span class="c1"># fmin = fs/(2*nf)</span>
-<span class="c1"># fmax = fs/2</span>
-<span class="c1"># vmin = 1e-4</span>
-<span class="c1"># extent = np.min(t), np.max(t), fmin, fmax</span>
-<span class="c1"># ax.imshow(np.abs(yw), norm=LogNorm(vmin=vmin, vmax=np.max(np.abs(yw))),</span>
-<span class="c1">#           interpolation=&#39;bilinear&#39;,</span>
-<span class="c1">#           extent=extent, aspect=&#39;auto&#39;)</span>
-<span class="c1"># ax.set_yscale(&quot;log&quot;)</span>
-<span class="c1"># # ax.set_ylim([1e-4, fs/2])</span>
-<span class="c1"># # ax.set_yscale(&quot;log&quot;)</span>
-<span class="c1"># # ax.set_xlim([0, 100])</span>
-<span class="c1"># # ax.set_ylim([1, 100])</span>
-<span class="c1"># # plt.tight_layout()</span>
-<span class="c1"># plt.show()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;frozen importlib._bootstrap&gt;:219: RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 232 from PyObject
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Size of the data</span>
-<span class="n">ND</span> <span class="o">=</span> <span class="n">data_noise_mod</span><span class="o">.</span><span class="n">size</span>
-<span class="n">tobs</span> <span class="o">=</span> <span class="n">delta_t</span> <span class="o">*</span> <span class="n">ND</span>
+<span class="c1"># Size of the data</span>
+<span class="n">ND</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prdgm_modulated</span><span class="p">)</span>
+<span class="n">tobs</span> <span class="o">=</span> <span class="n">prdgm_modulated</span><span class="o">.</span><span class="n">duration</span>
+<span class="c1"># timeseries = TimeSeries(data=data_noise_mod, time=tobs)</span>
 <span class="c1"># We know that the data varies slowly with f_true</span>
-<span class="c1"># The durations where the process is approximately stationary should be </span>
+<span class="c1"># The durations where the process is approximately stationary should be</span>
 <span class="c1"># much smaller than t_true = 1/f_true</span>
 <span class="c1"># If we pick dt = t_true / 10</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The duration over which the process is approximately stationary is &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">f_true</span><span class="o">/</span><span class="mi">10</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tobs</span><span class="p">)</span>
 
-<span class="n">q</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_data</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">qf</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-<span class="n">Nf</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">qf</span><span class="p">)</span>
-<span class="n">Nt</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="n">qf</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">ND</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">Nf</span><span class="o">*</span><span class="n">Nt</span><span class="p">)</span>
+<span class="n">q</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_data</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">qf</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">Nf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">qf</span><span class="p">)</span>
+<span class="n">Nt</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="n">qf</span><span class="p">)</span>
+
 <span class="n">mult</span> <span class="o">=</span> <span class="mi">32</span>
-<span class="n">K</span> <span class="o">=</span> <span class="n">mult</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">Nf</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">mult</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Nf</span>
 
 <span class="c1"># Here are</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">Nt</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">tobs</span><span class="p">)</span>
 <span class="n">dt</span> <span class="o">=</span> <span class="n">tobs</span> <span class="o">/</span> <span class="n">Nt</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The chosen wavelet time resolution is &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The chosen wavelet frequency resolution is &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Duration which the process is approximately stationary is </span><span class="si">{</span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">F_TRUE</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">10</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ND: </span><span class="si">{</span><span class="n">ND</span><span class="si">}</span><span class="s2">, Nf: </span><span class="si">{</span><span class="n">Nf</span><span class="si">}</span><span class="s2">, Nt: </span><span class="si">{</span><span class="n">Nt</span><span class="si">}</span><span class="s2">, Nf * Nt: </span><span class="si">{</span><span class="n">Nf</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Nt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dt=</span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s2">, df=</span><span class="si">{</span><span class="n">df</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The duration over which the process is approximately stationary is 9999.999999999998
-327680.0
-32768
-32768
-The chosen wavelet time resolution is 2560.0
-The chosen wavelet frequency resolution is 0.0001953125
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Duration which the process is approximately stationary is 10000.00
+ND: 16384, Nf: 256, Nt: 128, Nf * Nt: 32768
+dt=2560.0, df=0.0001953125
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_noise_mod_w</span> <span class="o">=</span> <span class="n">from_time_to_wavelet</span><span class="p">(</span><span class="n">data_noise_mod</span><span class="p">,</span> <span class="n">Nt</span><span class="o">=</span><span class="n">Nt</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="n">Nf</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">mult</span><span class="o">=</span><span class="n">mult</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># time and frequency grids</span>
-<span class="n">fm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Nf</span><span class="p">)</span> <span class="o">*</span> <span class="n">df</span>
-<span class="n">fm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">fm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">tn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Nt</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span>
-<span class="c1"># t_grid = np.arange(0, ND) * delta_t</span>
-<span class="c1"># f_grid = np.arange(0, ND // 2 + 1) * 1 / (tobs)</span>
-<span class="n">freq_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">df</span><span class="p">,</span> <span class="n">fm</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data_noise_mod_w</span><span class="p">),</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fm</span><span class="p">,</span> <span class="n">freq_range</span><span class="p">,</span>
-                                 <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-<span class="c1"># plt.savefig(&quot;../../../figures/non_stationary_wavelet.pdf&quot;)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_wavelet</span> <span class="o">=</span> <span class="n">from_time_to_wavelet</span><span class="p">(</span><span class="n">data_modulated</span><span class="p">,</span> <span class="n">Nt</span><span class="o">=</span><span class="n">Nt</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">mult</span><span class="o">=</span><span class="n">mult</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">data_wavelet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">df</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/44f0d8440ea0b9bef4fb7a577742de05c7783b002b4f04d08d8859c5072c5de5.png" src="../_images/44f0d8440ea0b9bef4fb7a577742de05c7783b002b4f04d08d8859c5072c5de5.png" />
-</div>
-</div>
-<p>Now assume that the evolutionary spectrum is given by</p>
-<div class="math notranslate nohighlight">
-\[
-S(t, f) = S_{n}(f) \left(1 + \alpha \cos(2 \pi f_0 t)\right)^2
-\]</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">amplitude_func</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f_true</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">spectrum_model</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>    
-    <span class="k">return</span> <span class="n">psd_func</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="n">amplitude_func</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-</pre></div>
-</div>
+<img alt="../_images/6ef0bef2670e62cc58a2f6e746f938086a9569497d66efa377e8ccb0074c7d31.png" src="../_images/6ef0bef2670e62cc58a2f6e746f938086a9569497d66efa377e8ccb0074c7d31.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">amplitude_func</span><span class="p">(</span><span class="n">tn</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">psd_func</span><span class="p">(</span><span class="n">fm</span><span class="p">)]))</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">data_noise_mod_w</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">stf</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tn</span> <span class="o">=</span> <span class="n">data_wavelet</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">data</span>
+<span class="n">fm</span> <span class="o">=</span> <span class="n">data_wavelet</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">data</span>
+<span class="n">stf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">modulation</span><span class="p">(</span><span class="n">tn</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">lisa_psd</span><span class="p">(</span><span class="n">fm</span><span class="p">)]))</span>
+<span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">analytical_wavelet</span> <span class="o">=</span> <span class="n">Wavelet</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">stf</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">fm</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">analytical_wavelet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">df</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(128, 256)
-(128, 256)
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">stf</span><span class="p">),</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fm</span><span class="p">,</span> <span class="n">freq_range</span><span class="p">,</span>
-                                 <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/a8f7f88ea74bffddbc664e42e4fc8023a69b2619d01df770cc35ab2b43084310.png" src="../_images/a8f7f88ea74bffddbc664e42e4fc8023a69b2619d01df770cc35ab2b43084310.png" />
+<img alt="../_images/bd58848dc2fadbfd0409f3c35211147463b0c920c5d646ce38dcdd9d5367759c.png" src="../_images/bd58848dc2fadbfd0409f3c35211147463b0c920c5d646ce38dcdd9d5367759c.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Try to weight the data</span>
-<span class="n">ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data_noise_mod_w</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">stf</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plot_wavelet_domain_signal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ratios</span><span class="p">),</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fm</span><span class="p">,</span> <span class="n">freq_range</span><span class="p">,</span>
-                                 <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/6c17d511b9549723c7e210dbf5111b00f16eab5d851f3bfb76a35409c60b109d.png" src="../_images/6c17d511b9549723c7e210dbf5111b00f16eab5d851f3bfb76a35409c60b109d.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ratios</span> <span class="o">*</span> <span class="n">Nt</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">ratios</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">analytical_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">)</span>
+<span class="n">ratios</span> <span class="o">=</span> <span class="n">Wavelet</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">ratios</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">fm</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ratios</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">df</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(128, 256)
-(256,)
-</pre></div>
-</div>
+<img alt="../_images/38cbf4f5c7ec2cd8d0ba36b1b843a993a6dbe0aed372815660944b24356552c3.png" src="../_images/38cbf4f5c7ec2cd8d0ba36b1b843a993a6dbe0aed372815660944b24356552c3.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iok</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">fm</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="o">*</span><span class="n">df</span><span class="p">)</span>
-<span class="n">amp_ratios</span> <span class="o">=</span> <span class="n">data_noise_mod_w</span><span class="p">[:,</span> <span class="n">iok</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">stf</span><span class="p">[:,</span> <span class="n">iok</span><span class="p">]</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">amp_ratios</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0114313283827758
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iok</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">fm</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># filter the data_noise_mod_w and the analytical_wavelet frequencies to keep only the positive frequencies</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">data_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">iok</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">analytical_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">iok</span><span class="p">,</span> <span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="n">amp_ratios</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># plot the ratios</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">amp_ratios</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1">#, range=[0, 0.5])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+    <span class="n">amp_ratios</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span>
+<span class="p">)</span>  <span class="c1"># , range=[0, 0.5])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\frac{\sqrt{|w_</span><span class="si">{nm}</span><span class="s2">| \tau_s}}{S_</span><span class="si">{x}</span><span class="s2">(f_m, t_n)}$&quot;</span><span class="p">)</span>
-<span class="c1"># plt.savefig(&quot;../../../figures/wavelet_statistics.pdf&quot;)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/6ab8c04575b5721912455c598e0252eeeba4a7cdfd9d17a55365840786c6e44c.png" src="../_images/6ab8c04575b5721912455c598e0252eeeba4a7cdfd9d17a55365840786c6e44c.png" />
+<img alt="../_images/9c27167807a8c1a7b51dc4211e0a3da19bc9ff3b2103b758c47bced311f910be.png" src="../_images/9c27167807a8c1a7b51dc4211e0a3da19bc9ff3b2103b758c47bced311f910be.png" />
 </div>
 </div>
 </section>
@@ -936,7 +650,7 @@ S(t, f) = S_{n}(f) \left(1 + \alpha \cos(2 \pi f_0 t)\right)^2
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports">1. Imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports-magic">1. Imports + Magic</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-data">2. Generate data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-frequency-domain-analytical-spectrum">3. Build frequency-domain analytical spectrum</a></li>
 </ul>
