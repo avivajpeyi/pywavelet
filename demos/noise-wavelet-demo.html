@@ -408,27 +408,6 @@ document.write(`
 </section>
 <section id="generate-data">
 <h2>2. Generate data<a class="headerlink" href="#generate-data" title="Permalink to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mi">120</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># Final time</span>
-<span class="n">fs</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># Sampling rate</span>
-<span class="n">delta_t</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">fs</span>  <span class="c1"># Sampling interval -- largely oversampling here.</span>
-<span class="n">n_data</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tmax</span> <span class="o">/</span> <span class="n">delta_t</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">lisa_psd</span><span class="p">,</span> <span class="n">n_data</span><span class="o">=</span><span class="n">n_data</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="n">tmax</span><span class="p">)</span>
-
-<span class="n">prdgm</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="n">true_psd</span> <span class="o">=</span> <span class="n">lisa_psd</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">prdgm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">DATA_COL</span><span class="p">)</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">true_psd</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">TRUE_COL</span><span class="p">)</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/cd62cf85e0fd1ccdb749bcfde5d5cc4e73d06e86a7dd44bfb65f8b4af53272bf.png" src="../_images/cd62cf85e0fd1ccdb749bcfde5d5cc4e73d06e86a7dd44bfb65f8b4af53272bf.png" />
-</div>
-</div>
 <p>One can generate a stationary time series with PSD <span class="math notranslate nohighlight">\(S_n(f)\)</span> and multiply this by some time-varying function <span class="math notranslate nohighlight">\(g(t)\)</span> and this gives you a time series with an amplitude-modulated spectrum <span class="math notranslate nohighlight">\(g(t)S_n(f)\)</span>,</p>
 <p><a class="reference external" href="https://d-nb.info/1192449703/34">See Example (i) on page 4 of the Dahlhaus ‘97 paper “Fitting Time Series Models to Nonstationary Processes”</a></p>
 <div class="cell docutils container">
@@ -441,6 +420,13 @@ document.write(`
 <span class="n">modulation</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">A_TRUE</span> <span class="o">*</span> <span class="p">(</span>
     <span class="mi">1</span> <span class="o">+</span> <span class="n">ALPHA_TRUE</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">F_TRUE</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
 <span class="p">)</span>
+
+<span class="n">tmax</span> <span class="o">=</span> <span class="mi">120</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># Final time</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># Sampling rate</span>
+<span class="n">delta_t</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">fs</span>  <span class="c1"># Sampling interval -- largely oversampling here.</span>
+<span class="n">n_data</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tmax</span> <span class="o">/</span> <span class="n">delta_t</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">lisa_psd</span><span class="p">,</span> <span class="n">n_data</span><span class="o">=</span><span class="n">n_data</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="n">tmax</span><span class="p">)</span>
+
 <span class="n">data_modulated</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">modulation</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="p">),</span> <span class="n">time</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">time</span>
 <span class="p">)</span>
@@ -456,12 +442,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f5189cf68f8c2d5d73a4660a9b7e818b6d6bd161e6c30e553dc9a74c1f2d32fc.png" src="../_images/f5189cf68f8c2d5d73a4660a9b7e818b6d6bd161e6c30e553dc9a74c1f2d32fc.png" />
+<img alt="../_images/b7c278cd574d511c34470f4ed64c68375dd498a49d239f350e3e00f5f34c706d.png" src="../_images/b7c278cd574d511c34470f4ed64c68375dd498a49d239f350e3e00f5f34c706d.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prdgm_modulated</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">data_modulated</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prdgm</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">prdgm_modulated</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">data_modulated</span><span class="p">)</span>
+<span class="n">true_psd</span> <span class="o">=</span> <span class="n">lisa_psd</span><span class="p">(</span><span class="n">prdgm</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">prdgm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">DATA_COL</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span>
@@ -483,7 +471,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/152e5e237a591913cd7b333bbdfcdc0b809a9a4b02275dfccdeffc4393599813.png" src="../_images/152e5e237a591913cd7b333bbdfcdc0b809a9a4b02275dfccdeffc4393599813.png" />
+<img alt="../_images/3c7e48a281d992eb4664a2771f45144280d2e0264fbb2910fadc96d9cd2a2586.png" src="../_images/3c7e48a281d992eb4664a2771f45144280d2e0264fbb2910fadc96d9cd2a2586.png" />
 </div>
 </div>
 </section>
@@ -516,16 +504,16 @@ document.write(`
 <span class="n">dt</span> <span class="o">=</span> <span class="n">tobs</span> <span class="o">/</span> <span class="n">Nt</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;Duration which the process is approximately stationary is </span><span class="si">{</span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">F_TRUE</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">10</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;Duration which the process is approximately stationary is </span><span class="si">{</span><span class="mi">1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">F_TRUE</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">10</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ND: </span><span class="si">{</span><span class="n">ND</span><span class="si">}</span><span class="s2">, Nf: </span><span class="si">{</span><span class="n">Nf</span><span class="si">}</span><span class="s2">, Nt: </span><span class="si">{</span><span class="n">Nt</span><span class="si">}</span><span class="s2">, Nf * Nt: </span><span class="si">{</span><span class="n">Nf</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Nt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ND: </span><span class="si">{</span><span class="n">ND</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">, Nf: </span><span class="si">{</span><span class="n">Nf</span><span class="si">}</span><span class="s2">, Nt: </span><span class="si">{</span><span class="n">Nt</span><span class="si">}</span><span class="s2">, Nf * Nt: </span><span class="si">{</span><span class="n">Nf</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Nt</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dt=</span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s2">, df=</span><span class="si">{</span><span class="n">df</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Duration which the process is approximately stationary is 10000.00
-ND: 16384, Nf: 256, Nt: 128, Nf * Nt: 32768
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Duration which the process is approximately stationary is 10,000.00
+ND: 16,384, Nf: 256, Nt: 128, Nf * Nt: 32,768
 dt=2560.0, df=0.0001953125
 </pre></div>
 </div>
@@ -537,11 +525,12 @@ dt=2560.0, df=0.0001953125
 <span class="n">fig</span> <span class="o">=</span> <span class="n">data_wavelet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">df</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 <span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wavelet transform of the modulated data&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.01</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/6ef0bef2670e62cc58a2f6e746f938086a9569497d66efa377e8ccb0074c7d31.png" src="../_images/6ef0bef2670e62cc58a2f6e746f938086a9569497d66efa377e8ccb0074c7d31.png" />
+<img alt="../_images/40fc76283d208707035aecc764c2ba4532a2c1ffedb706eafd4d72297fa629ec.png" src="../_images/40fc76283d208707035aecc764c2ba4532a2c1ffedb706eafd4d72297fa629ec.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -555,11 +544,12 @@ dt=2560.0, df=0.0001953125
 <span class="n">fig</span> <span class="o">=</span> <span class="n">analytical_wavelet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">df</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 <span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Analytical wavelet&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.01</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/bd58848dc2fadbfd0409f3c35211147463b0c920c5d646ce38dcdd9d5367759c.png" src="../_images/bd58848dc2fadbfd0409f3c35211147463b0c920c5d646ce38dcdd9d5367759c.png" />
+<img alt="../_images/eaddfdd67fd428e332301a4ef7b663c253ece2509975f19b52eba3f80e37a7bf.png" src="../_images/eaddfdd67fd428e332301a4ef7b663c253ece2509975f19b52eba3f80e37a7bf.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -572,11 +562,12 @@ dt=2560.0, df=0.0001953125
 <span class="n">fig</span> <span class="o">=</span> <span class="n">ratios</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">df</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 <span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Ratio of modulated data to analytical wavelet&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.01</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/38cbf4f5c7ec2cd8d0ba36b1b843a993a6dbe0aed372815660944b24356552c3.png" src="../_images/38cbf4f5c7ec2cd8d0ba36b1b843a993a6dbe0aed372815660944b24356552c3.png" />
+<img alt="../_images/ac37010e4b8d01a605861c41c9a310b6f5155c8017dd28f56974a7ca6ca7c159.png" src="../_images/ac37010e4b8d01a605861c41c9a310b6f5155c8017dd28f56974a7ca6ca7c159.png" />
 </div>
 </div>
 <div class="cell docutils container">
