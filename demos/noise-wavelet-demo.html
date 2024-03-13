@@ -578,13 +578,38 @@ dt=2560.0, df=0.0001953125
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/d1ec839e7bf8ddae5db94982279e529c962d99c1371f499d8ddbcb5f8311fdb6.png" src="../_images/d1ec839e7bf8ddae5db94982279e529c962d99c1371f499d8ddbcb5f8311fdb6.png" />
+<img alt="../_images/f098efa8231f50c55238cbf0144327c5ec47687ab990a71cb10e843ab45f3d87.png" src="../_images/f098efa8231f50c55238cbf0144327c5ec47687ab990a71cb10e843ab45f3d87.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="snr">
 <h2>2) SNR<a class="headerlink" href="#snr" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iok</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">fm</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># filter the data_noise_mod_w and the analytical_wavelet frequencies to keep only the positive frequencies</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">data_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">iok</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">analytical_wavelet</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">iok</span><span class="p">,</span> <span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="c1"># d = data_wavelet.data</span>
+<span class="c1"># a = analytical_wavelet.data ** 2</span>
+<span class="n">tau_s</span> <span class="o">=</span> <span class="n">data_wavelet</span><span class="o">.</span><span class="n">delta_t</span> <span class="o">/</span>  
+<span class="n">amp_ratios</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># plot the ratios</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+    <span class="n">amp_ratios</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span>
+<span class="p">)</span>  <span class="c1"># , range=[0, 0.5])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\frac{\sqrt{|w_</span><span class="si">{nm}</span><span class="s2">| \tau_s}}{S_</span><span class="si">{x}</span><span class="s2">(f_m, t_n)}$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 </section>
 
